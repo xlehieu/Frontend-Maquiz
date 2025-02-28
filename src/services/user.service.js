@@ -11,6 +11,7 @@ export const login = async (data) => {
         return res.data;
     } catch (err) {
         if (err.response) {
+            console.log(err);
             throw new Error(err.response.data.message); // Ném lỗi để xử lý ở nơi gọi hàm login
         }
     }
@@ -23,8 +24,9 @@ export const getUserDetail = async () => {
         if (res.data) {
             return res.data;
         }
-        return {};
+        return null;
     } catch (err) {
+        console.log('Lỗi get user detail', err);
         throw new Error(err.response.data.message);
     }
 };
