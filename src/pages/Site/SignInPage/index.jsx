@@ -48,7 +48,7 @@ const SignInPage = () => {
             message.success('Đăng nhập thành công');
             navigate('/');
         } else if (getUserDetailMutation.isError) {
-            message.error(getUserDetailMutation.error.message);
+            message.error('Đăng nhập không thành công');
         }
     }, [getUserDetailMutation.isSuccess, getUserDetailMutation.isError]);
     return (
