@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { useTimer } from 'react-timer-hook';
 const Timer = ({ setIsEnded }) => {
     const endTime = new Date();
-    endTime.setSeconds(endTime.getSeconds() + 10);
+    endTime.setHours(endTime.getHours() + 12);
     const { seconds, minutes, hours } = useTimer({
         expiryTimestamp: endTime,
         onExpire: () => setIsEnded(true),
