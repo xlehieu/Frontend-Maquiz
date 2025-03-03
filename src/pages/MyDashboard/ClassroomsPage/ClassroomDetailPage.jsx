@@ -1,4 +1,4 @@
-import { faBookOpen, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
+import { faBookOpen, faEllipsisVertical, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
 import Tippy from '@tippyjs/react';
@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import BlurBackground from '~/components/BlurBackground';
 import LazyImage from '~/components/LazyImage';
 import LoadingComponent from '~/components/LoadingComponent';
+import Modal from '~/components/Modal';
 import { quizRouter } from '~/config';
 import configEditor from '~/config/editor';
 import useMutationHooks from '~/hooks/useMutationHooks';
@@ -73,7 +74,7 @@ const ChooseQuizzes = ({ quizzes = [], selectedQuizzes, setSelectedQuizzes }) =>
 const NewsFeedComponent = () => {
     const navigate = useNavigate();
     const { classroom } = useContext(ClassroomContext);
-    console.log(classroom);
+    const [isShowModal, setIsShowModal] = useState(false);
     const [isOpenQuizzes, setIsOpenQuizzes] = useState(false);
     const [notificationText, setNotificationText] = useState('');
     const user = useSelector((state) => state.user);
@@ -100,105 +101,130 @@ const NewsFeedComponent = () => {
             uploadPostMutation.reset();
         }
     }, [uploadPostMutation.isError, uploadPostMutation.isSuccess]);
+
+    //handle delete post by id
+    const deletePostMutation = useMutationHooks((data) => PostService.deletePostById(data));
+    const [currentId, setCurrentId] = useState(null);
+    const handleDeletePost = () => {
+        if (!currentId) return message.error('Lỗi');
+    };
     return (
-        <div className="w-full">
-            <div className="md:rounded-2xl md:overflow-hidden w-full h-56 relative">
-                <img className="w-full h-full object-cover opacity-80" src={classroom?.thumb} alt="class image" />
-                <h3 className="absolute bottom-4 left-4 text-4xl font-medium text-white line-clamp-1">
-                    {classroom?.name}
-                </h3>
-            </div>
-            <div className="mt-5">
-                <div>
-                    <JoditEditor
-                        config={{ ...configEditor, minHeight: 150, placeholder: 'Thông báo cho lớp học' }}
-                        value={notificationText}
-                        onBlur={(text) => setNotificationText(text)} // preferred to use only this option to update the content for performance reasons
-                        //onChange={setQuestionContent}
-                    />
-                    <div className="flex justify-between items-center mt-3">
-                        <button
-                            className="text-2xl md:text-base bg-primary text-white rounded px-3 py-1 "
-                            onClick={() => setIsOpenQuizzes(!isOpenQuizzes)}
-                        >
-                            <FontAwesomeIcon className="mr-1" icon={faBookOpen} />
-                            Thêm đề thi
-                        </button>
-                        <button
-                            onClick={uploadPost}
-                            className="text-2xl md:text-base bg-primary text-white rounded px-3 py-1"
-                        >
-                            Đăng
-                        </button>
+        <>
+            <div className="w-full">
+                <div className="md:rounded-2xl md:overflow-hidden w-full h-56 relative">
+                    <img className="w-full h-full object-cover opacity-80" src={classroom?.thumb} alt="class image" />
+                    <h3 className="absolute bottom-4 left-4 text-4xl font-medium text-white line-clamp-1">
+                        {classroom?.name}
+                    </h3>
+                </div>
+                <div className="mt-5">
+                    <div>
+                        <JoditEditor
+                            config={{ ...configEditor, minHeight: 150, placeholder: 'Thông báo cho lớp học' }}
+                            value={notificationText}
+                            onBlur={(text) => setNotificationText(text)} // preferred to use only this option to update the content for performance reasons
+                            //onChange={setQuestionContent}
+                        />
+                        <div className="flex justify-between items-center mt-3">
+                            <button
+                                className="text-2xl md:text-base bg-primary text-white rounded px-3 py-1 "
+                                onClick={() => setIsOpenQuizzes(!isOpenQuizzes)}
+                            >
+                                <FontAwesomeIcon className="mr-1" icon={faBookOpen} />
+                                Thêm đề thi
+                            </button>
+                            <button
+                                onClick={uploadPost}
+                                className="text-2xl md:text-base bg-primary text-white rounded px-3 py-1"
+                            >
+                                Đăng
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="mt-5">
-                {classroom?.posts?.map((post, index) => (
-                    <div key={index} className="w-full border rounded px-3 py-3">
-                        <div className="flex justify-between border-b-2 border-gray-300 pb-2">
-                            <div>
-                                {post?.createdBy?.avatar && <img src={post?.createdBy?.avatar} alt="avatar" />}
-                                <div className="flex flex-col justify-center">
-                                    <p className="text-md font-semibold text-gray-600">
-                                        {post?.createdBy?.name || post?.createdBy?.email}
-                                    </p>
-                                    <span className="text-gray-400 text-xs">
-                                        {post?.createdAt && dayjs(post?.createdAt).format('DD/MM/YYYY')}
-                                    </span>
-                                </div>
-                            </div>
-                            {post?.createdBy?.email === user?.email && (
+                <div className="mt-5">
+                    {classroom?.posts?.map((post, index) => (
+                        <div key={index} className="w-full border rounded px-3 py-3">
+                            <div className="flex justify-between border-b-2 border-gray-300 pb-2">
                                 <div>
-                                    <Tippy
-                                        interactive={true}
-                                        trigger="click"
-                                        placement="bottom-end"
-                                        offset={[10, -10]}
-                                        content={
-                                            <div className="flex flex-col shadow-md bg-white" tabIndex="-1">
-                                                sdfgsdfgsfknnmnk
-                                            </div>
-                                        }
-                                    >
-                                        <button className="mr-3 px-2 py-2">
-                                            <FontAwesomeIcon
-                                                icon={faEllipsisVertical}
-                                                className="text-3xl md:text-xl text-gray-700"
-                                            />
+                                    {post?.createdBy?.avatar && <img src={post?.createdBy?.avatar} alt="avatar" />}
+                                    <div className="flex flex-col justify-center">
+                                        <p className="text-md font-semibold text-gray-600">
+                                            {post?.createdBy?.name || post?.createdBy?.email}
+                                        </p>
+                                        <span className="text-gray-400 text-xs">
+                                            {post?.createdAt && dayjs(post?.createdAt).format('DD/MM/YYYY')}
+                                        </span>
+                                    </div>
+                                </div>
+                                {post?.createdBy?.email === user?.email && (
+                                    <div>
+                                        <Tippy
+                                            interactive={true}
+                                            trigger="click"
+                                            placement="bottom-end"
+                                            offset={[0, 0]}
+                                            content={
+                                                <div
+                                                    className="flex flex-col shadow-md bg-white w-28 rounded-md overflow-hidden"
+                                                    tabIndex="-1"
+                                                >
+                                                    <button
+                                                        onClick={() => setIsShowModal(!isShowModal)}
+                                                        className="py-1 px-2 text-white bg-red-500 hover:opacity-80 transition-all"
+                                                    >
+                                                        <FontAwesomeIcon className="mr-1" icon={faTrash} />
+                                                        Xóa
+                                                    </button>
+                                                </div>
+                                            }
+                                        >
+                                            <button className="mr-3 px-2 py-2">
+                                                <FontAwesomeIcon
+                                                    icon={faEllipsisVertical}
+                                                    className="text-3xl md:text-xl text-gray-700"
+                                                />
+                                            </button>
+                                        </Tippy>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="mt-3">{HTMLReactParser(post.content)}</div>
+                            {post?.quizzes && (
+                                <div className="grid gap-2 grid-cols-2 md:grid-cols-3 pt-2 border-t-2 border-gray-300">
+                                    {post?.quizzes?.map((quiz) => (
+                                        <button
+                                            onClick={() => navigate(`${quizRouter.reviewQuiz}/${quiz.slug}`)}
+                                            className="rounded border pb-2 shadow hover:shadow-lg"
+                                        >
+                                            <LazyImage src={quiz.thumb} />
+                                            {quiz.name}
                                         </button>
-                                    </Tippy>
+                                    ))}
                                 </div>
                             )}
                         </div>
-                        <div className="mt-3">{HTMLReactParser(post.content)}</div>
-                        {post?.quizzes && (
-                            <div className="grid gap-2 grid-cols-2 md:grid-cols-3 pt-2 border-t-2 border-gray-300">
-                                {post?.quizzes?.map((quiz) => (
-                                    <button
-                                        onClick={() => navigate(`${quizRouter.reviewQuiz}/${quiz.slug}`)}
-                                        className="rounded border pb-2 shadow-md"
-                                    >
-                                        <LazyImage src={quiz.thumb} />
-                                        {quiz.name}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                ))}
+                    ))}
+                </div>
+                {isOpenQuizzes && (
+                    <>
+                        <BlurBackground onClick={() => setIsOpenQuizzes(!isOpenQuizzes)} isActive={isOpenQuizzes} />
+                        <ChooseQuizzes
+                            quizzes={quizzesQuery?.data}
+                            selectedQuizzes={selectedQuizzes}
+                            setSelectedQuizzes={setSelectedQuizzes}
+                        />
+                    </>
+                )}
             </div>
-            {isOpenQuizzes && (
-                <>
-                    <BlurBackground onClick={() => setIsOpenQuizzes(!isOpenQuizzes)} isActive={isOpenQuizzes} />
-                    <ChooseQuizzes
-                        quizzes={quizzesQuery?.data}
-                        selectedQuizzes={selectedQuizzes}
-                        setSelectedQuizzes={setSelectedQuizzes}
-                    />
-                </>
-            )}
-        </div>
+            <Modal
+                isShow={isShowModal}
+                onCancel={() => setIsShowModal(false)}
+                onOk={() => handleDeletePost()}
+                onLoading={deletePostMutation.isPending}
+                title="Xóa thông báo lớp học"
+            />
+        </>
     );
 };
 const EveryoneComponent = () => {

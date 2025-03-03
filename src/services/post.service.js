@@ -21,3 +21,11 @@ export const getPostsByClassroomId = async (data) => {
         throw new Error('Lấy bài thông báo thất bại');
     }
 };
+export const deletePostById = async (data) => {
+    try {
+        const { id } = data;
+        if (!id) throw 'Lỗi';
+        const res = await axiosCredentials.delete(`/post/deletePostById/${id}`);
+        if (res.status === 200) return 'Xóa bài thành công';
+    } catch (err) {}
+};
