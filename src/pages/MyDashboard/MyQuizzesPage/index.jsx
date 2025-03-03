@@ -1,39 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import React, {
-    createContext,
-    memo,
-    useCallback,
-    useContext,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import * as QuizService from '~/services/quiz.service';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faCircleQuestion,
-    faChartSimple,
-    faBookOpenReader,
-    faPlayCircle,
-    faEye,
-    faPlusSquare,
-    faEdit,
-    faReply,
-    faClose,
-} from '@fortawesome/free-solid-svg-icons';
-import { message, Popover } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
-import router, { userDashboardRouter } from '~/config';
+import { faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import router from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteOneQuiz, setQuiz } from '~/redux/slices/quiz.slice';
 import LoadingComponent from '~/components/LoadingComponent';
-import LazyImage from '~/components/LazyImage';
-import { ScaleLoader } from 'react-spinners';
-import { colors } from '~/constants';
-import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import useMutationHooks from '~/hooks/useMutationHooks';
-import { LoadingOutlined } from '@ant-design/icons';
 import QuizCard from '~/components/QuizCard';
 import { handleCountQuestion } from '~/utils';
 import Modal from '~/components/Modal';

@@ -131,7 +131,6 @@ const checkQuestionCorrectQuestionType2 = (
     return null;
 };
 const calculateScore = (answerChoices, countQuestionQuizDetail) => {
-    console.log('AnswerChoice', answerChoices);
     if (typeof answerChoices === 'object') {
         let countCorrectAnswer = 0;
         //vào part
@@ -140,12 +139,13 @@ const calculateScore = (answerChoices, countQuestionQuizDetail) => {
             if (typeof value === 'object') {
                 //vào question và lấy được giá trị bằng value
                 Object.entries(value).forEach(([keyQuestion, valueQuestion]) => {
-                    if (typeof valueQuestion === 'object') {
-                        if (valueQuestion.isCorrect) {
+                    if (valueQuestion?.length > 0) {
+                        if (valueQuestion.every((answer) => answer.isCorrect === true)) {
                             countCorrectAnswer++;
                         }
-                    } else if (Array.isArray(valueQuestion)) {
-                        if (valueQuestion.every((answer) => answer.isCorrect === true)) {
+                    }
+                    if (typeof valueQuestion === 'object') {
+                        if (valueQuestion.isCorrect) {
                             countCorrectAnswer++;
                         }
                     }
@@ -309,12 +309,20 @@ const TakeQuizInfo = () => {
                         <Select.Option value={4000}>4s</Select.Option>
                     </Select>
                 </div>
-                <button
-                    className="bg-red-500 block rounded-md px-3 py-1 mt-3 md:max-w-20 duration-300 hover:opacity-65"
-                    onClick={handleBack}
-                >
-                    <p className="text-center text-white">Trở về</p>
-                </button>
+                <div className="flex mt-3 gap-3">
+                    <button
+                        className="bg-red-500 block rounded-md px-3 py-1  duration-300 hover:opacity-65"
+                        onClick={handleBack}
+                    >
+                        <p className="text-center text-white">Trở về</p>
+                    </button>
+                    <button
+                        className="bg-yellow-500 block rounded-md px-3 py-1 duration-300 hover:opacity-65"
+                        onClick={() => setIsEnded(true)}
+                    >
+                        <p className="text-center text-white">Kết thúc</p>
+                    </button>
+                </div>
             </div>
             <div className="px-4 py-2 bg-white rounded shadow">
                 <p className="font-medium mb-4">Danh sách phần thi ({quizDetail?.quiz?.length})</p>

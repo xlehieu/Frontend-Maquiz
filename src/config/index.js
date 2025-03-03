@@ -22,6 +22,7 @@ export const userDashboardRouter = {
     classroom: '/my-dashboard/classroom',
     createClassroom: '/my-dashboard/classroom/tao-lop-hoc',
 };
+//có truyền reviewQuiz/:slug ok
 export const quizRouter = {
     reviewQuiz: '/review-quiz',
     takeQuiz: '/take-quiz',

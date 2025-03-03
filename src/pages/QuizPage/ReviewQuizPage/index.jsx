@@ -122,7 +122,7 @@ const ReviewQuizPage = () => {
                 )}
             </>
         ),
-        2: <div>Hello2</div>,
+        // 2: <div>Hello2</div>,
     };
     return (
         <div className="w-full">

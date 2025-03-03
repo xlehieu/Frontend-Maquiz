@@ -22,7 +22,7 @@ export const getUserDetail = async () => {
     try {
         const res = await axiosNoInterceptor.get(`/user/detail`);
         if (res.data) {
-            return res.data;
+            return res.data?.data;
         }
         return null;
     } catch (err) {
@@ -54,7 +54,7 @@ export const refreshToken = async () => {
 };
 export const logout = async () => {
     try {
-        const res = await axios.post(`/user/log-out`);
+        const res = await axiosCredentials.post(`/user/log-out`);
         return res;
     } catch (err) {
         throw new Error(err.response.data.message);

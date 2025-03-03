@@ -1,31 +1,30 @@
 import React, { Fragment, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { publicRoutes } from './routes';
 import { updateUser } from './redux/slices/user.slice';
 import DefaultLayout from './layouts/DefaultLayout';
 import * as UserService from './services/user.service';
 import './App.css';
-import useMutationHooks from './hooks/useMutationHooks';
+import { useQuery } from '@tanstack/react-query';
 function App() {
     const dispatch = useDispatch();
+    const user = useSelector((state) => state.user);
     const handleUpdateUser = async () => {
         const res = await UserService.getUserDetail();
-        if (res.data) {
-            dispatch(updateUser({ ...res.data }));
+        if (res) {
+            dispatch(updateUser({ ...res }));
         }
+        return res;
     };
-    const getUserMutation = useMutationHooks(() => handleUpdateUser());
-    useEffect(() => {
-        getUserMutation.mutate();
-    }, []);
+    const userQuery = useQuery({ queryKey: ['user'], queryFn: handleUpdateUser, enabled: !user.email });
     // useEffect(() => {
     //     const disableRightClick = (e) => e.preventDefault();
     //     document.addEventListener('contextmenu', disableRightClick);
     //     return () => document.removeEventListener('contextmenu', disableRightClick);
     // }, []);
     return (
-        <Router>
+        <BrowserRouter>
             <div className="App">
                 <Routes>
                     {publicRoutes.map((route, index) => {
@@ -55,7 +54,7 @@ function App() {
                     })}
                 </Routes>
             </div>
-        </Router>
+        </BrowserRouter>
     );
 }
 

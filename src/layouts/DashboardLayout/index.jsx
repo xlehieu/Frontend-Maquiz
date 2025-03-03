@@ -55,12 +55,7 @@ const items = [
 ];
 const DashboardLayout = ({ children, title = 'Maquiz' }) => {
     document.title = title;
-    const navigate = useNavigate();
     const user = useSelector((state) => state.user); // dùng selector để lấy thông tin từ reducer
-    useEffect(() => {
-        if (!user.email) navigate('/');
-    }, [user]);
-
     return (
         <div className="relative">
             <aside className="fixed h-screen z-10 bg-white w-56 shadow-md hidden md:block">

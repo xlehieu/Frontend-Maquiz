@@ -44,7 +44,7 @@ const SignInPage = () => {
     }, [loginMutation.isSuccess, loginMutation.isError]);
     useEffect(() => {
         if (getUserDetailMutation.data) {
-            dispatch(updateUser({ ...getUserDetailMutation.data.data }));
+            dispatch(updateUser({ ...getUserDetailMutation.data }));
             message.success('Đăng nhập thành công');
             navigate('/');
         } else if (getUserDetailMutation.isError) {

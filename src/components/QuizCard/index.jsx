@@ -13,7 +13,7 @@ import { ScaleLoader } from 'react-spinners';
 import { colors } from '~/constants';
 import LazyImage from '../LazyImage';
 import { Link, useNavigate } from 'react-router-dom';
-import { userDashboardRouter } from '~/config';
+import { quizRouter, userDashboardRouter } from '~/config';
 import { Popover } from 'antd';
 
 const QuizCard = ({ title, slug, time, questionCount = 0, accessCount = 0, examCount = 0, imageSrc, id, onDelete }) => {
@@ -73,7 +73,7 @@ const QuizCard = ({ title, slug, time, questionCount = 0, accessCount = 0, examC
             </div>
             <div className="px-3 py-3 border-t-2">
                 <Link
-                    to={`/review-quiz/${slug}`}
+                    to={`${quizRouter.reviewQuiz}/${slug}`}
                     className="inline-block rounded border hover:text-white hover:opacity-80 ease-linear transition-all duration-200 text-white bg-gradient-to-r from-primary to-[#1e998c] px-2 py-2"
                 >
                     <FontAwesomeIcon icon={faPlayCircle} className="pr-1" />
