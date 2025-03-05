@@ -32,7 +32,7 @@ const QuizCard = ({
     return (
         <button
             onClick={() => navigate(`${quizRouter.reviewQuiz}/${slug}`)}
-            className="shrink-0 max-w-80 transition-all duration-300 shadow-lg rounded hover:shadow-lg "
+            className="shrink-0 max-w-80 transition-all duration-300 shadow-lg rounded hover:shadow-2xl"
         >
             <div className="w-full h-52 flex justify-center content-center">
                 <LazyImage src={imageSrc} alt={title} placeholder={<ScaleLoader color={colors.primary} />} />
@@ -40,10 +40,10 @@ const QuizCard = ({
             <div className="px-2 py-2">
                 <p className="font-normal text-base line-clamp-2">{title}</p>
                 {time && (
-                    <>
-                        <FontAwesomeIcon icon={faCircleQuestion} />
+                    <div className='flex items-center gap-1'>
+                        <FontAwesomeIcon className='text-orange-900' icon={faCircleQuestion} />
                         <p>{dayjs(time).format('DD/MM/YYYY')}</p>
-                    </>
+                    </div>
                 )}
                 <div className="mt-2">
                     <div className="text-base flex gap-3">

@@ -9,7 +9,7 @@ const HistoryAccessPage = () => {
         <section className="pb-5">
             <h1 className="text-3xl font-bold text-gray-500 text-center my-5">Lịch sử truy cập bài thi</h1>
             <div className="bg-white px-3 pt-3 pb-10 border rounded-lg shadow-md">
-                <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5">
+                <div className="grid grid-cols-2 md:grid-cols-4 2xl:grid-cols-5 gap-5">
                     {userQuery?.data?.quizAccessHis?.length > 0 &&
                         userQuery?.data?.quizAccessHis?.map((quiz, index) => (
                             <QuizCard
