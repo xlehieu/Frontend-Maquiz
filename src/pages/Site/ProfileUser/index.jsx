@@ -6,6 +6,7 @@ import UploadComponent from '~/components/UploadComponent';
 import useMutationHooks from '~/hooks/useMutationHooks';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 const ProfileUser = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
@@ -14,14 +15,22 @@ const ProfileUser = () => {
     const [address, setAddress] = useState('');
     const [imageUrl, setImageUrl] = useState(''); //Anh base64
     const updateUserMutation = useMutationHooks((data) => UserService.updateUser(data));
-    const getUserDetailMutation = useMutationHooks(() => UserService.getUserDetail());
-    console.log(getUserDetailMutation.data);
+    const userDetailQuery = useQuery({
+        queryKey: ['userDetailQueryToUpdate'],
+        queryFn: () => UserService.getUserDetail(),
+    });
     useEffect(() => {
-        if (updateUserMutation.data) {
-            message.success(updateUserMutation.data?.message);
+        if (userDetailQuery.data) {
+            setEmail(userDetailQuery.data.email);
+            setName(userDetailQuery.data.name);
+            setPhone(userDetailQuery.data.phone);
+            setAddress(userDetailQuery.data.address);
+            setImageUrl(userDetailQuery.data.avatar); //Anh base64
         }
-    }, [updateUserMutation.data]);
+    }, [userDetailQuery.data]);
     const handleClick = async () => {
+        if (!email || !name || !phone || !address || !imageUrl)
+            return message.warning('Vui lòng nhập đủ thông tin cá nhân');
         updateUserMutation.mutate({
             email,
             name,
@@ -37,37 +46,27 @@ const ProfileUser = () => {
         [imageUrl],
     );
     useEffect(() => {
-        if (getUserDetailMutation.isPending) return;
-        if (getUserDetailMutation.isError) {
-            navigate('/dang-nhap');
-        } else if (getUserDetailMutation.isSuccess) {
-            if (getUserDetailMutation.data) {
-                setName(getUserDetailMutation.data.name);
-                setEmail(getUserDetailMutation.data.email);
-                setPhone(getUserDetailMutation.data.phone);
-                setAddress(getUserDetailMutation.data.address);
-                if (getUserDetailMutation.data.avatar) {
-                    setImageUrl(getUserDetailMutation.data.avatar);
-                }
-            }
+        if (updateUserMutation.isPending) return;
+        if (updateUserMutation.isError) {
+            message.error('Sửa thông tin cá nhân thất bại');
+        } else if (updateUserMutation.isSuccess) {
+            message.success('Thay đổi thông tin thành công');
+            navigate('/');
         }
-    }, [getUserDetailMutation.isError, getUserDetailMutation.isSuccess]);
-    useLayoutEffect(() => {
-        getUserDetailMutation.mutate();
-    }, []);
+    }, [updateUserMutation.isError, updateUserMutation.isSuccess]);
     return (
         <>
-            {getUserDetailMutation.isPending || updateUserMutation.isPending ? (
+            {userDetailQuery.isLoading || updateUserMutation.isPending ? (
                 <LoadingComponent />
             ) : (
                 <div className="flex justify-center my-6">
-                    <div className="w-3/4 bg-white px-8 py-5 rounded-md shadow-sm">
+                    <div className="w-full md:w-3/4 bg-white px-8 py-5 rounded-md shadow-sm">
                         <div className="border-b border-solid border-gray-200 pb-3">
                             <h5>Hồ sơ của tôi</h5>
                             <p className="text-slate-500">Quản lý hồ sơ để bảo mật tài khoản</p>
                         </div>
-                        <div className="grid grid-cols-12">
-                            <div className="col-span-8">
+                        <div className="grid grid-cols-12 gap-4">
+                            <div className="col-span-12 md:col-span-8">
                                 <div className=" border-r mt-6 pr-5 border-gray-200">
                                     <table className="min-w-full">
                                         <tbody>
@@ -134,7 +133,7 @@ const ProfileUser = () => {
                                     </table>
                                 </div>
                             </div>
-                            <div className="col-span-4 flex flex-col items-center">
+                            <div className="col-span-12 md:col-span-4">
                                 <UploadComponent imageUrl={imageUrl} setImageUrl={handleChangeAvatar} />
                             </div>
                         </div>

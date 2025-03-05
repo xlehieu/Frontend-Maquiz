@@ -31,7 +31,7 @@ const UploadComponent = ({ imageUrl, setImageUrl, ...props }) => {
         setLoading(true);
         getBase64(event.target.files[0], (base64) => {
             setLoading(false);
-            setImageUrl(base64);
+            setImageUrl(base64); // tra base64 từ event load của reader
         });
     };
     const handleClickOpenInputFile = () => {

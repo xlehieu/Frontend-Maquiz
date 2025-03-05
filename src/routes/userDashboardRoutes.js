@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 import { userDashboardRouter } from '~/config';
 import DashboardLayout from '~/layouts/DashboardLayout';
-const HistoryAccessPage = lazy(() => import('~/pages/MyDashboard/HistoryAccessPage'));
+const HistoryAccessPage = lazy(() => import('~/pages/MyDashboard/AccessHistoryPage'));
 const MainDashboard = lazy(() => import('~/pages/MyDashboard/MyLibraryPage'));
 const MyQuizPage = lazy(() => import('~/pages/MyDashboard/MyQuizzesPage'));
 const QuizDetailPage = lazy(() => import('~/pages/MyDashboard/QuizDetailPage'));
@@ -19,7 +19,7 @@ const userDashboardRoutes = [
         path: userDashboardRouter.historyAccess,
         component: HistoryAccessPage,
         layout: DashboardLayout,
-        title: 'Dashboard',
+        title: 'Đề thi đã truy cập',
     },
     {
         path: userDashboardRouter.myQuiz,

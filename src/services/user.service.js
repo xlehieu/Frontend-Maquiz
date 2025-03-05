@@ -26,7 +26,6 @@ export const getUserDetail = async () => {
         }
         return null;
     } catch (err) {
-        console.log('Lỗi get user detail', err);
         throw new Error(err.response.data.message);
     }
 };
@@ -62,7 +61,7 @@ export const logout = async () => {
 };
 export const updateUser = async (data) => {
     try {
-        const res = await axiosCredentials.put(`/user/update`, JSON.stringify(data));
+        const res = await axiosCredentials.patch(`/user/update`, JSON.stringify(data));
         return res.data;
     } catch (err) {
         throw new Error(err.response.data.message);

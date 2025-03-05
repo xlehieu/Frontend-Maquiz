@@ -117,3 +117,7 @@ export const educationLevels = [
     'Doanh nghiệp',
 ];
 export const topics = [];
+
+export const CONSTANTS_KEY_LOCAL_STORAGE = {
+    quizzes_access_history: 'quiz_access_history',
+};

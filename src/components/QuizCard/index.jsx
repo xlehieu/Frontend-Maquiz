@@ -15,20 +15,34 @@ import LazyImage from '../LazyImage';
 import { Link, useNavigate } from 'react-router-dom';
 import { quizRouter, userDashboardRouter } from '~/config';
 import { Popover } from 'antd';
+import dayjs from 'dayjs';
 
-const QuizCard = ({ title, slug, time, questionCount = 0, accessCount = 0, examCount = 0, imageSrc, id, onDelete }) => {
+const QuizCard = ({
+    title,
+    slug,
+    time,
+    questionCount = 0,
+    accessCount = 0,
+    examCount = 0,
+    imageSrc,
+    id,
+    onDelete = false,
+}) => {
     const navigate = useNavigate();
     return (
-        <div className="shrink-0 max-w-80 transition-all duration-300 shadow-lg rounded hover:shadow-lg ">
+        <button
+            onClick={() => navigate(`${quizRouter.reviewQuiz}/${slug}`)}
+            className="shrink-0 max-w-80 transition-all duration-300 shadow-lg rounded hover:shadow-lg "
+        >
             <div className="w-full h-52 flex justify-center content-center">
                 <LazyImage src={imageSrc} alt={title} placeholder={<ScaleLoader color={colors.primary} />} />
             </div>
             <div className="px-2 py-2">
-                <p className="font-normal text-base line-clamp-2 h-12">{title}</p>
+                <p className="font-normal text-base line-clamp-2">{title}</p>
                 {time && (
                     <>
                         <FontAwesomeIcon icon={faCircleQuestion} />
-                        <p>{time}</p>
+                        <p>{dayjs(time).format('DD/MM/YYYY')}</p>
                     </>
                 )}
                 <div className="mt-2">
@@ -48,29 +62,31 @@ const QuizCard = ({ title, slug, time, questionCount = 0, accessCount = 0, examC
                     </div>
                 </div>
             </div>
-            <div className="px-2 py-2 border-t-2">
-                <div className="mt-2">
-                    <div className="text-base flex gap-3">
-                        <Popover trigger={'hover'} content={'Xem chi tiết'}>
-                            <button onClick={() => navigate(`${userDashboardRouter.myQuiz}/${id}`)}>
-                                <FontAwesomeIcon icon={faEye} className="pr-1 text-[#f27735]" />
-                            </button>
-                        </Popover>
-                        <Popover trigger={'hover'} content={'Chỉnh sửa đề thi'}>
-                            <button onClick={() => navigate(`${userDashboardRouter.myQuiz}/chinh-sua/${id}`)}>
-                                <FontAwesomeIcon icon={faEdit} className="pr-1 text-[#851e3f]" />
-                            </button>
-                        </Popover>
-                        {onDelete && (
-                            <Popover trigger={'hover'} content={'Xóa đề thi'}>
-                                <button onClick={onDelete}>
-                                    <FontAwesomeIcon icon={faTrashCan} className="pr-1 text-red-500" />
-                                </button>
-                            </Popover>
-                        )}
+            {onDelete && (
+                <div className="px-2 py-2 border-t-2">
+                    <div className="mt-2">
+                        <div className="text-base flex gap-3">
+                            <>
+                                <Popover trigger={'hover'} content={'Xem chi tiết'}>
+                                    <button onClick={() => navigate(`${userDashboardRouter.myQuiz}/${id}`)}>
+                                        <FontAwesomeIcon icon={faEye} className="pr-1 text-[#f27735]" />
+                                    </button>
+                                </Popover>
+                                <Popover trigger={'hover'} content={'Chỉnh sửa đề thi'}>
+                                    <button onClick={() => navigate(`${userDashboardRouter.myQuiz}/chinh-sua/${id}`)}>
+                                        <FontAwesomeIcon icon={faEdit} className="pr-1 text-[#851e3f]" />
+                                    </button>
+                                </Popover>
+                                <Popover trigger={'hover'} content={'Xóa đề thi'}>
+                                    <button onClick={onDelete}>
+                                        <FontAwesomeIcon icon={faTrashCan} className="pr-1 text-red-500" />
+                                    </button>
+                                </Popover>
+                            </>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
             <div className="px-3 py-3 border-t-2">
                 <Link
                     to={`${quizRouter.reviewQuiz}/${slug}`}
@@ -80,7 +96,7 @@ const QuizCard = ({ title, slug, time, questionCount = 0, accessCount = 0, examC
                     Vào ôn thi
                 </Link>
             </div>
-        </div>
+        </button>
     );
 };
 export default memo(QuizCard);

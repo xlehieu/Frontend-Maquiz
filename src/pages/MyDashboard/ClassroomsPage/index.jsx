@@ -313,7 +313,7 @@ const ClassroomsPageMain = () => {
 
     return (
         <>
-            <div className="flex justify-between my-5">
+            <div className="flex justify-between my-5 w-full">
                 <h4 className="font-medium text-gray-500">Lớp học</h4>
             </div>
             <section className="w-full min-h-screen bg-white px-8 rounded-xl shadow-lg flex flex-col">

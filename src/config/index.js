@@ -1,5 +1,6 @@
 const router = {
     home: '/',
+    contact: '/lien-he',
     signIn: '/dang-nhap',
     signUp: '/dang-ky',
     profile: '/thong-tin',

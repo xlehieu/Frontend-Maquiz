@@ -146,8 +146,14 @@ const NewsFeedComponent = () => {
                     {classroom?.posts?.map((post, index) => (
                         <div key={index} className="w-full border rounded px-3 py-3">
                             <div className="flex justify-between border-b-2 border-gray-300 pb-2">
-                                <div>
-                                    {post?.createdBy?.avatar && <img src={post?.createdBy?.avatar} alt="avatar" />}
+                                <div className="flex items-center">
+                                    {post?.createdBy?.avatar && (
+                                        <img
+                                            className="w-12 h-12 border-2 rounded-full mr-2"
+                                            src={post?.createdBy?.avatar}
+                                            alt="avatar"
+                                        />
+                                    )}
                                     <div className="flex flex-col justify-center">
                                         <p className="text-md font-semibold text-gray-600">
                                             {post?.createdBy?.name || post?.createdBy?.email}
@@ -191,7 +197,7 @@ const NewsFeedComponent = () => {
                             </div>
                             <div className="mt-3">{HTMLReactParser(post.content)}</div>
                             {post?.quizzes && (
-                                <div className="grid gap-2 grid-cols-2 md:grid-cols-3 pt-2 border-t-2 border-gray-300">
+                                <div className="grid gap-2 grid-cols-2 md:grid-cols-4 xl:grid-cols-5 pt-2 border-t-2 border-gray-300">
                                     {post?.quizzes?.map((quiz) => (
                                         <button
                                             onClick={() => navigate(`${quizRouter.reviewQuiz}/${quiz.slug}`)}

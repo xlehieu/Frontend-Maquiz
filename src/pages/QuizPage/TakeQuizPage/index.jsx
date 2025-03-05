@@ -6,7 +6,6 @@ import congratsAnimation from '~/asset/animations/congratulations-2.json';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 //component
-import useMutationHooks from '~/hooks/useMutationHooks';
 import * as QuizService from '~/services/quiz.service';
 import Timer from './Timer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -130,16 +129,28 @@ const checkQuestionCorrectQuestionType2 = (
     }
     return null;
 };
-const calculateScore = (answerChoices, countQuestionQuizDetail) => {
-    if (typeof answerChoices === 'object') {
+const countCorrectAnswerQuizDetail = (question) => {
+    if (!(question.answers.length > 0)) return 0;
+    let count = 0;
+    question.answers.forEach((answer) => {
+        if (answer?.isCorrect) count++;
+    });
+    return count;
+};
+const calculateScore = (answerChoices, countQuestionQuizDetail, quizDetail) => {
+    if (typeof answerChoices === 'object' && typeof quizDetail === 'object' && quizDetail?.quiz?.length > 0) {
         let countCorrectAnswer = 0;
         //vào part
-        Object.entries(answerChoices).forEach(([key, value]) => {
+        Object.entries(answerChoices).forEach(([keyPart, value]) => {
             // entries trả về mảng, mảng đó lại chứa các mảng [key,value]
             if (typeof value === 'object') {
                 //vào question và lấy được giá trị bằng value
                 Object.entries(value).forEach(([keyQuestion, valueQuestion]) => {
-                    if (valueQuestion?.length > 0) {
+                    if (
+                        Array.isArray(valueQuestion) &&
+                        countCorrectAnswerQuizDetail(quizDetail.quiz[keyPart].questions[keyQuestion]) ===
+                            valueQuestion.length
+                    ) {
                         if (valueQuestion.every((answer) => answer.isCorrect === true)) {
                             countCorrectAnswer++;
                         }
@@ -649,7 +660,7 @@ const TakeQuizPageMain = () => {
     const [score, setScore] = useState(0);
     useEffect(() => {
         if (isEnded) {
-            setScore(calculateScore(answerChoices, countQuestionQuizDetail) ?? 0);
+            setScore(calculateScore(answerChoices, countQuestionQuizDetail, quizDetail) ?? 0);
         }
     }, [isEnded]);
     return (

@@ -3,7 +3,7 @@ import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import HTMLReactParser from 'html-react-parser';
-import useMutationHooks from '~/hooks/useMutationHooks';
+import store from 'store2';
 import * as QuizService from '~/services/quiz.service';
 import { faBookOpen, faStar } from '@fortawesome/free-solid-svg-icons';
 import GeneralInformation from './GeneralInformation';
@@ -31,11 +31,6 @@ const ReviewQuizPage = () => {
             key: 1,
             label: 'Nội dung đề thi',
             icon: faBookOpen,
-        },
-        {
-            key: 2,
-            label: 'Đánh giá',
-            icon: faStar,
         },
     ];
     const tabs = {

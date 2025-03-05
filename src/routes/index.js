@@ -8,6 +8,7 @@ const DefaultLayout = lazy(() => import('../layouts/DefaultLayout'));
 const SignInUpLayout = lazy(() => import('~/layouts/SignInUpLayout'));
 const NotFoundLayout = lazy(() => import('~/layouts/NotFoundLayout'));
 const HomePage = lazy(() => import('../pages/Site/HomePage/HomePage'));
+const ContactPage = lazy(() => import('../pages/Site/ContactPage'));
 const NotFoundPage = lazy(() => import('../pages/Site/NotFoundPage/NotFoundPage'));
 const SignInPage = lazy(() => import('~/pages/Site/SignInPage'));
 const SignUpPage = lazy(() => import('~/pages/Site/SignUpPage'));
@@ -16,6 +17,7 @@ const CreateQuizPage = lazy(() => import('~/pages/QuizPage/CreateQuizPage'));
 const DiscoverPage = lazy(() => import('~/pages/Site/DiscoveryPage'));
 export const publicRoutes = [
     { path: router.home, component: HomePage, layout: DefaultLayout },
+    { path: router.contact, component: ContactPage, layout: DefaultLayout },
     { path: router.signIn, component: SignInPage, layout: SignInUpLayout, title: 'Đăng nhập' },
     { path: router.signUp, component: SignUpPage, layout: SignInUpLayout, title: 'Đăng ký' },
     { path: router.profile, component: ProfileUser, layout: DefaultLayout },

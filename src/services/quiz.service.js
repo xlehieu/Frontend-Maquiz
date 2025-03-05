@@ -172,3 +172,13 @@ export const getDiscoveryQuizzes = async (data) => {
         throw new Error(err.response.data);
     }
 };
+export const getQuizzesBySlugs = async (data) => {
+    const { slugs } = data;
+    if (!slugs || slugs.length === 0) throw new Error('Slugs are required');
+    const query = encodeURIComponent(JSON.stringify(slugs));
+    const res = await axiosCredentials.get(`/quiz/getQuizzesBySlugs?slugs=${query}`);
+    if (res.status === 200) {
+        return res.data.data;
+    }
+    return [];
+};
