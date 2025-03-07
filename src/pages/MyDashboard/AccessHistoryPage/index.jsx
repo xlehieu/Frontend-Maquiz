@@ -16,12 +16,13 @@ const HistoryAccessPage = () => {
                             <QuizCard
                                 key={index}
                                 time={quiz.createdAt}
-                                questionCount={quiz.questionCount || handleCountQuestion(quiz) || 0}
+                                questionCount={quiz.questionCount||0}
                                 imageSrc={quiz.thumb}
                                 accessCount={quiz.accessCount}
                                 examCount={quiz.examCount}
                                 slug={quiz.slug}
                                 title={quiz.name}
+                                id={quiz._id}
                             />
                         ))}
                 </div>

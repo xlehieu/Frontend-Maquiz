@@ -90,20 +90,10 @@ const SideBar = () => {
 };
 const MainResult = () => {
     const { quizzes, searchValue, setSearchValue } = useContext(QuizzesContext);
-    const favoriteMutation = useMutationHooks((data) => UserService.favoriteQuiz(data));
     const dispatch = useDispatch();
     const userInfo = useSelector((state) => state.user);
     console.log(userInfo);
-    const handleFavoriteQuiz = (id, slug) => {
-        if (!id) return;
-        favoriteMutation.mutate({ id });
-        dispatch(favoriteQuiz({ slug }));
-    };
-    useEffect(() => {
-        if (favoriteMutation.isSuccess) {
-            favoriteMutation.reset();
-        }
-    }, [favoriteMutation.isSuccess]);
+    
     return (
         <section className="rounded-lg px-3 py-4 flex-1 bg-white shadow-xl">
             <div className="flex justify-between border-b pb-2">
@@ -126,12 +116,9 @@ const MainResult = () => {
                                 title={quiz.name}
                                 accessCount={quiz.accessCount}
                                 examCount={quiz.examCount}
-                                questionCount={handleCountQuestion(quiz.quiz)}
                                 imageSrc={quiz.thumb}
                                 id={quiz._id}
                                 slug={quiz.slug}
-                                onFavorite={handleFavoriteQuiz}
-                                isFavorite={userInfo.favoriteQuiz.some((q) => q.slug === quiz.slug)}
                             />
                         ))}
                     </>

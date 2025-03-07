@@ -8,16 +8,20 @@ import {
     faTrashCan,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { ScaleLoader } from 'react-spinners';
 import { colors } from '~/constants';
 import LazyImage from '../LazyImage';
 import { Link, useNavigate } from 'react-router-dom';
 import { quizRouter, userDashboardRouter } from '~/config';
-import { Popover } from 'antd';
+import {Popover } from 'antd';
 import dayjs from 'dayjs';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import * as UserService from '~/services/user.service'
+import useMutationHooks from '~/hooks/useMutationHooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { favoriteQuiz } from '~/redux/slices/user.slice';
 const QuizCard = ({
     title,
     slug,
@@ -29,9 +33,22 @@ const QuizCard = ({
     id,
     onDelete = false,
     isFavorite = false,
-    onFavorite = () => {},
 }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
+    const userInfo = useSelector(state=>state.user)
+    const favoriteMutation = useMutationHooks((data) => UserService.favoriteQuiz(data));
+        const handleFavoriteQuiz = (id, slug) => {
+            if (!id) return;
+            favoriteMutation.mutate({ id });
+            dispatch(favoriteQuiz({ slug }));
+        };
+        useEffect(() => {
+            if (favoriteMutation.isSuccess) {
+                favoriteMutation.reset();
+            }
+        }, [favoriteMutation.isSuccess]);
+        isFavorite=userInfo.favoriteQuiz.some((q) => q.slug === slug)
     return (
         <div className="shrink-0 max-w-80 transition-all duration-300 shadow-lg rounded hover:shadow-2xl">
             <div
@@ -98,7 +115,7 @@ const QuizCard = ({
                     <FontAwesomeIcon icon={faPlayCircle} className="pr-1" />
                     Vào ôn thi
                 </Link>
-                <button onClick={() => onFavorite(id, slug)}>
+                <button onClick={() => handleFavoriteQuiz(id, slug)}>
                     <FontAwesomeIcon
                         className="text-red-500 text-2xl"
                         icon={isFavorite ? faHeartSolid : faHeartRegular}
