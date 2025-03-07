@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
 import { useTimer } from 'react-timer-hook';
-const Timer = ({ setIsEnded }) => {
+const Timer = ({ setIsTimeout }) => {
     const endTime = new Date();
     endTime.setHours(endTime.getHours() + 12);
     const { seconds, minutes, hours } = useTimer({
         expiryTimestamp: endTime,
-        onExpire: () => setIsEnded(true),
+        onExpire: () => setIsTimeout(true),
     });
     return (
         <p className="text-xl font-bold text-primary">

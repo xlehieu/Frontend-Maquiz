@@ -67,3 +67,23 @@ export const updateUser = async (data) => {
         throw new Error(err.response.data.message);
     }
 };
+export const favoriteQuiz = async (data) => {
+    try {
+        const { id } = data;
+        const res = await axiosCredentials.patch(`/user/favorite-quiz`, JSON.stringify({ quizId: id }));
+        if (res.status === 200) return res.data;
+        return null;
+    } catch (err) {
+        throw new Error(err.response.data.message);
+    }
+};
+
+export const getMyFavoriteQuiz = async () => {
+    try {
+        const res = await axiosCredentials.get(`/user/favorite-quiz`);
+        if (res.statusCode === 200) return res.data;
+        return null;
+    } catch (err) {
+        throw new Error(err.response.data.message);
+    }
+};

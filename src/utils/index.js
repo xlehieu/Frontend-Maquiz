@@ -34,7 +34,7 @@ export const isNumber = (number) => {
 };
 
 export const handleCountQuestion = (quiz) => {
-    if (quiz?.length > 0) {
+    if (Array.isArray(quiz)) {
         return quiz.reduce((accumulator, partCurrent) => {
             return accumulator + partCurrent?.questions?.length;
         }, 0);

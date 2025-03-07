@@ -1,13 +1,17 @@
 import { faBookOpen, faClockRotateLeft, faHeart, faHouse, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import QuizCard from '~/components/QuizCard';
 import { userDashboardRouter } from '~/config';
 import useDebounce from '~/hooks/useDebounce';
 import useMutationHooks from '~/hooks/useMutationHooks';
 import * as QuizService from '~/services/quiz.service';
+import * as UserService from '~/services/user.service';
+import { useDispatch } from 'react-redux';
 import { handleCountQuestion } from '~/utils';
+import { favoriteQuiz } from '~/redux/slices/user.slice';
 const items = [
     {
         label: 'Cá nhân',
@@ -86,6 +90,20 @@ const SideBar = () => {
 };
 const MainResult = () => {
     const { quizzes, searchValue, setSearchValue } = useContext(QuizzesContext);
+    const favoriteMutation = useMutationHooks((data) => UserService.favoriteQuiz(data));
+    const dispatch = useDispatch();
+    const userInfo = useSelector((state) => state.user);
+    console.log(userInfo);
+    const handleFavoriteQuiz = (id, slug) => {
+        if (!id) return;
+        favoriteMutation.mutate({ id });
+        dispatch(favoriteQuiz({ slug }));
+    };
+    useEffect(() => {
+        if (favoriteMutation.isSuccess) {
+            favoriteMutation.reset();
+        }
+    }, [favoriteMutation.isSuccess]);
     return (
         <section className="rounded-lg px-3 py-4 flex-1 bg-white shadow-xl">
             <div className="flex justify-between border-b pb-2">
@@ -112,6 +130,8 @@ const MainResult = () => {
                                 imageSrc={quiz.thumb}
                                 id={quiz._id}
                                 slug={quiz.slug}
+                                onFavorite={handleFavoriteQuiz}
+                                isFavorite={userInfo.favoriteQuiz.some((q) => q.slug === quiz.slug)}
                             />
                         ))}
                     </>

@@ -7,7 +7,7 @@ export const createClassroom = async (data) => {
             throw new Error('Tên lớp học và tên môn học không thể bỏ trống');
         }
         const response = await axiosCredentials.post(
-            '/classroom/createClassroom',
+            '/classroom/create',
             JSON.stringify({
                 name: classroomName,
                 subject: subjectName,
@@ -23,7 +23,7 @@ export const createClassroom = async (data) => {
 };
 export const getUserClassrooms = async () => {
     try {
-        const response = await axiosCredentials.get('/classroom/getUserClassrooms');
+        const response = await axiosCredentials.get('/classroom/mine');
         if (response.data) return response.data?.data;
         return null;
     } catch (err) {
@@ -43,7 +43,7 @@ export const getClassroomDetail = async (data) => {
             }
         });
         if (!classCode?.trim()) throw 'Lỗi';
-        const res = await axiosCredentials.get(`/classroom/getClassroomDetail?${params}`);
+        const res = await axiosCredentials.get(`/classroom/detail?${params}`);
         if (res.status === 200 && res.data) {
             return res.data.data;
         }
@@ -58,7 +58,7 @@ export const enrollInClassroom = async (data) => {
     try {
         const { classCode } = data;
         if (!classCode?.trim()) throw 'Vui lòng nhập mã lớp';
-        const res = await axiosCredentials.patch('/classroom/enrollInClassroom', JSON.stringify({ classCode }));
+        const res = await axiosCredentials.patch('/classroom/enroll', JSON.stringify({ classCode }));
         if (res.status === 200 && res.data) {
             return res.data.data;
         }

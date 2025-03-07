@@ -115,7 +115,7 @@ const MyQuizPageMain = () => {
                                   title={quiz.name}
                                   accessCount={quiz.accessCount}
                                   examCount={quiz.examCount}
-                                  questionCount={handleCountQuestion(quiz.quiz)}
+                                  questionCount={quiz?.questionCount || handleCountQuestion(quiz.quiz)}
                                   imageSrc={quiz.thumb}
                                   id={quiz._id}
                                   slug={quiz.slug}

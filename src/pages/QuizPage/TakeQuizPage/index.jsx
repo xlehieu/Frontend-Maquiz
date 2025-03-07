@@ -15,6 +15,8 @@ import HTMLReactParser from 'html-react-parser';
 import LoadingComponent from '~/components/LoadingComponent';
 import router from '~/config';
 import { useQuery } from '@tanstack/react-query';
+import useMutationHooks from '~/hooks/useMutationHooks';
+import * as QuizHistoryService from '~/services/quizHistory.service';
 
 //end
 
@@ -175,6 +177,7 @@ const TakeQuizProvider = ({ children }) => {
     });
     const [timePass, setTimePass] = useState(2000);
     const [isEnded, setIsEnded] = useState(false);
+    const [isTimeout, setIsTimeout] = useState(false);
     const [currentPartIndex, setCurrentPartIndex] = useState(0);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answerChoices, dispatchAnswerChoices] = useReducer(answerChoiceReducer, {});
@@ -214,12 +217,6 @@ const TakeQuizProvider = ({ children }) => {
             setCountAnswerChoices(count);
         }
     }, [answerChoices]);
-    // khi hết giờ làm bài, timer sẽ set lại isTimeUp
-    useEffect(() => {
-        if (isEnded) {
-            message.error('Bạn đã hết giờ làm bài');
-        }
-    }, [isEnded]);
     //
 
     //Khi get có lỗi
@@ -265,6 +262,8 @@ const TakeQuizProvider = ({ children }) => {
                 setTimePass,
                 isEnded,
                 setIsEnded,
+                isTimeout,
+                setIsTimeout,
                 currentPartIndex,
                 setCurrentPartIndex,
                 currentQuestionIndex,
@@ -283,8 +282,16 @@ const TakeQuizProvider = ({ children }) => {
 //region phần bên trái của trang (hiển thị thông tin cơ bản bài thi)
 const TakeQuizInfo = () => {
     const navigate = useNavigate();
-    const { quizDetail, setIsEnded, timePass, setTimePass, currentPartIndex, setCurrentPartIndex, answerChoices } =
-        useContext(TakeQuizContext);
+    const {
+        quizDetail,
+        setIsEnded,
+        setIsTimeout,
+        timePass,
+        setTimePass,
+        currentPartIndex,
+        setCurrentPartIndex,
+        answerChoices,
+    } = useContext(TakeQuizContext);
     const handleChangePartIndex = (partIndex) => {
         if (partIndex === currentPartIndex) return;
         setCurrentPartIndex(partIndex);
@@ -303,7 +310,7 @@ const TakeQuizInfo = () => {
                 </div>
                 <div className="border-b border-gray-300 py-2">
                     <p>Thời gian làm bài</p>
-                    <Timer setIsEnded={setIsEnded} />
+                    <Timer setIsTimeout={setIsTimeout} />
                 </div>
                 <div className="pt-2">
                     <p className="font-medium pb-1 text-sm">Tự động chuyển câu sau</p>
@@ -656,42 +663,59 @@ const TableOfQuestion = () => {
     );
 };
 const TakeQuizPageMain = () => {
-    const { quizDetail, answerChoices, isEnded, countQuestionQuizDetail } = useContext(TakeQuizContext);
+    const { quizDetail, answerChoices, isEnded, isTimeout, countQuestionQuizDetail } = useContext(TakeQuizContext);
     const [score, setScore] = useState(0);
+    const handleSaveTakeQuizHistory = useMutationHooks((data) => QuizHistoryService.saveQuizHistory(data));
     useEffect(() => {
-        if (isEnded) {
-            setScore(calculateScore(answerChoices, countQuestionQuizDetail, quizDetail) ?? 0);
+        if (isTimeout) {
+            message.warning('Bạn đã hết giờ làm bài');
         }
-    }, [isEnded]);
+        if (isEnded || isTimeout) {
+            const score = calculateScore(answerChoices, countQuestionQuizDetail, quizDetail) || 0;
+            setScore(score);
+            handleSaveTakeQuizHistory.mutate({
+                quizId: quizDetail.id,
+                score: score,
+                answerChoices,
+            });
+        }
+        if (!answerChoices || !score || !quizDetail.id) return;
+    }, [isEnded, isTimeout]);
     return (
         <div className="w-full h-full flex justify-center items-center">
-            {!isEnded ? (
-                <div className="flex w-full flex-col-reverse lg:flex-row gap-3 lg:items-start">
-                    {quizDetail?.quiz && (
-                        <>
-                            <TakeQuizInfo />
-                            <ChooseAnswer />
-                            <TableOfQuestion />
-                        </>
+            {!handleSaveTakeQuizHistory.isPending ? (
+                <>
+                    {!isEnded ? (
+                        <div className="flex w-full flex-col-reverse lg:flex-row gap-3 lg:items-start">
+                            {quizDetail?.quiz && (
+                                <>
+                                    <TakeQuizInfo />
+                                    <ChooseAnswer />
+                                    <TableOfQuestion />
+                                </>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="absolute inset-0 w-full bg-black bg-opacity-65 overflow-hidden min-h-96 px-5 py-5 md:px-10 md:py-10 flex justify-center items-start">
+                            <div className="relative text-black w-full md:w-2/3 bg-white rounded-md px-5 pt-10 pb-24 md:pb-20 flex justify-center flex-col items-center">
+                                <h4 className="">Điểm của bạn là:</h4>
+                                <p className="text-9xl my-5 font-semibold text-primary">{score}</p>
+                                <Link
+                                    to={router.discover}
+                                    className="bg-primary text-3xl px-3 py-3 mt-6 md:px-2 md:py-2 md:mt-4 z-20 absolute text-white font-bold md:text-lg rounded-md bottom-5"
+                                >
+                                    OK
+                                </Link>
+                            </div>
+                            <Lottie
+                                className="w-full md:w-2/3 absolute bottom-60 md:-bottom-24 z-10"
+                                animationData={congratsAnimation}
+                            />
+                        </div>
                     )}
-                </div>
+                </>
             ) : (
-                <div className="absolute inset-0 w-full bg-black bg-opacity-65 overflow-hidden min-h-96 px-5 py-5 md:px-10 md:py-10 flex justify-center items-start">
-                    <div className="relative text-black w-full md:w-2/3 bg-white rounded-md px-5 pt-10 pb-24 md:pb-20 flex justify-center flex-col items-center">
-                        <h4 className="">Điểm của bạn là:</h4>
-                        <p className="text-9xl my-5 font-semibold text-primary">{score}</p>
-                        <Link
-                            to={router.discover}
-                            className="bg-primary text-3xl px-3 py-3 mt-6 md:px-2 md:py-2 md:mt-4 z-20 absolute text-white font-bold md:text-lg rounded-md bottom-5"
-                        >
-                            OK
-                        </Link>
-                    </div>
-                    <Lottie
-                        className="w-full md:w-2/3 absolute bottom-60 md:-bottom-24 z-10"
-                        animationData={congratsAnimation}
-                    />
-                </div>
+                <LoadingComponent />
             )}
         </div>
     );

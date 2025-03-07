@@ -16,7 +16,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { quizRouter, userDashboardRouter } from '~/config';
 import { Popover } from 'antd';
 import dayjs from 'dayjs';
-
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
 const QuizCard = ({
     title,
     slug,
@@ -27,37 +28,39 @@ const QuizCard = ({
     imageSrc,
     id,
     onDelete = false,
+    isFavorite = false,
+    onFavorite = () => {},
 }) => {
     const navigate = useNavigate();
     return (
-        <button
-            onClick={() => navigate(`${quizRouter.reviewQuiz}/${slug}`)}
-            className="shrink-0 max-w-80 transition-all duration-300 shadow-lg rounded hover:shadow-2xl"
-        >
-            <div className="w-full h-52 flex justify-center content-center">
+        <div className="shrink-0 max-w-80 transition-all duration-300 shadow-lg rounded hover:shadow-2xl">
+            <div
+                onClick={() => navigate(`${quizRouter.reviewQuiz}/${slug}`)}
+                className="w-full h-52 flex justify-center content-center hover:cursor-pointer"
+            >
                 <LazyImage src={imageSrc} alt={title} placeholder={<ScaleLoader color={colors.primary} />} />
             </div>
-            <div className="px-2 py-2">
-                <p className="font-normal text-base line-clamp-2">{title}</p>
+            <div className="px-2 py-3">
+                <p className="font-bold text-base line-clamp-2">{title}</p>
                 {time && (
-                    <div className='flex items-center gap-1'>
-                        <FontAwesomeIcon className='text-orange-900' icon={faCircleQuestion} />
-                        <p>{dayjs(time).format('DD/MM/YYYY')}</p>
+                    <div className="flex items-center gap-1">
+                        <FontAwesomeIcon className="text-orange-900" icon={faCircleQuestion} />
+                        <p className="text-gray-700">{dayjs(time).format('DD/MM/YYYY')}</p>
                     </div>
                 )}
                 <div className="mt-2">
                     <div className="text-base flex gap-3">
                         <Popover trigger={'hover'} content={'Câu hỏi'}>
                             <FontAwesomeIcon icon={faCircleQuestion} className="mr-1 text-yellow-500" />
-                            <span>{questionCount ?? 0}</span>
+                            <span className="text-gray-700">{questionCount ?? 0}</span>
                         </Popover>
                         <Popover trigger={'hover'} content={'Lượt truy cập'}>
                             <FontAwesomeIcon icon={faChartSimple} className="mr-1 text-blue-500" />
-                            <span>{accessCount ?? 0}</span>
+                            <span className="text-gray-700">{accessCount ?? 0}</span>
                         </Popover>
                         <Popover trigger={'hover'} content={'Số lượt thi'}>
                             <FontAwesomeIcon icon={faBookOpenReader} className="mr-1 text-green-500" />
-                            <span>{examCount ?? 0}</span>
+                            <span className="text-gray-700">{examCount ?? 0}</span>
                         </Popover>
                     </div>
                 </div>
@@ -87,7 +90,7 @@ const QuizCard = ({
                     </div>
                 </div>
             )}
-            <div className="px-3 py-3 border-t-2">
+            <div className="px-3 py-3 border-t-2 flex justify-between">
                 <Link
                     to={`${quizRouter.reviewQuiz}/${slug}`}
                     className="inline-block rounded border hover:text-white hover:opacity-80 ease-linear transition-all duration-200 text-white bg-gradient-to-r from-primary to-[#1e998c] px-2 py-2"
@@ -95,8 +98,14 @@ const QuizCard = ({
                     <FontAwesomeIcon icon={faPlayCircle} className="pr-1" />
                     Vào ôn thi
                 </Link>
+                <button onClick={() => onFavorite(id, slug)}>
+                    <FontAwesomeIcon
+                        className="text-red-500 text-2xl"
+                        icon={isFavorite ? faHeartSolid : faHeartRegular}
+                    />
+                </button>
             </div>
-        </button>
+        </div>
     );
 };
 export default memo(QuizCard);

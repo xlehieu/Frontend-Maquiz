@@ -105,8 +105,14 @@ const NewsFeedComponent = () => {
     //handle delete post by id
     const deletePostMutation = useMutationHooks((data) => PostService.deletePostById(data));
     const [currentId, setCurrentId] = useState(null);
+    const handleOpenModal = (id) => {
+        console.log(id);
+        setIsShowModal(true);
+        setCurrentId(id);
+    };
     const handleDeletePost = () => {
         if (!currentId) return message.error('Lỗi');
+        deletePostMutation.mutate({ postIdToDelete: currentId });
     };
     return (
         <>
@@ -176,7 +182,7 @@ const NewsFeedComponent = () => {
                                                     tabIndex="-1"
                                                 >
                                                     <button
-                                                        onClick={() => setIsShowModal(!isShowModal)}
+                                                        onClick={() => handleOpenModal(post._id)}
                                                         className="py-1 px-2 text-white bg-red-500 hover:opacity-80 transition-all"
                                                     >
                                                         <FontAwesomeIcon className="mr-1" icon={faTrash} />
@@ -198,8 +204,12 @@ const NewsFeedComponent = () => {
                             <div className="mt-3">{HTMLReactParser(post.content)}</div>
                             {post?.quizzes && (
                                 <div className="grid gap-2 grid-cols-2 md:grid-cols-4 xl:grid-cols-5 pt-2 border-t-2 border-gray-300">
-                                    {post?.quizzes?.map((quiz) => (
+                                    <p className="text-xl text-emerald-900 col-span-2 md:col-span-4 xl:col-span-5">
+                                        Đề thi:
+                                    </p>
+                                    {post?.quizzes?.map((quiz, index) => (
                                         <button
+                                            key={index}
                                             onClick={() => navigate(`${quizRouter.reviewQuiz}/${quiz.slug}`)}
                                             className="rounded border pb-2 shadow hover:shadow-lg"
                                         >
@@ -229,6 +239,7 @@ const NewsFeedComponent = () => {
                 onOk={() => handleDeletePost()}
                 onLoading={deletePostMutation.isPending}
                 title="Xóa thông báo lớp học"
+                content="Bạn có chắc về quết định này?"
             />
         </>
     );
