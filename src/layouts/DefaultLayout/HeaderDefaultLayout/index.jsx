@@ -22,7 +22,7 @@ const HeaderComponent = () => {
     const dispatch = useDispatch();
     const handleLogOut = async () => {
         await UserService.logout();
-        dispatch(resetUser({}));
+        dispatch(resetUser());
     };
     const [isMobileResponsive, setIsMobileResponsive] = useState(false);
     return (
