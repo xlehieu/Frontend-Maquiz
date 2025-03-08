@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkclient=self.webpackChunkclient||[]).push([[823],{5823:(e,c,s)=>{s.r(c),s.d(c,{default:()=>i});s(7565);var t=s(7929);const i=()=>(0,t.jsx)("div",{children:"Edit"})}}]);
-//# sourceMappingURL=823.0bb2e4f0.chunk.js.map
