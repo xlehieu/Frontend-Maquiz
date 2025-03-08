@@ -26,6 +26,7 @@ const MyLibrary = () => {
                             onDelete={false}
                             examCount={quiz.examCount}
                             questionCount={quiz.questionCount || '...'}
+                            id={quiz._id}
                         />
                     ))}
                     </div>
