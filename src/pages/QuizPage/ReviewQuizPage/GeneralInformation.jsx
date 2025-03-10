@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { quizRouter } from '~/config';
 import { Popover } from 'antd';
 import LazyImage from '~/components/LazyImage';
+import Modal from '~/components/Modal';
 
 const GeneralInformation = ({ quizDetail }) => {
     const navigate = useNavigate();
@@ -18,10 +19,12 @@ const GeneralInformation = ({ quizDetail }) => {
         }
         return 0;
     }, [quizDetail]);
-    const handleStartQuiz = async () => {
+    const handleOpenModalStartQuiz = async () => {
         navigate(`${quizRouter.takeQuiz}/${quizDetail?.slug}`);
     };
     return (
+        <>
+           
         <div className="px-2 py-2 rounded-sm shadow-md border bg-white">
             <h6 className="font-semibold">Thông tin đề thi</h6>
             <div className="grid grid-cols-3 mt-2 gap-3">
@@ -77,7 +80,7 @@ const GeneralInformation = ({ quizDetail }) => {
                 <div className="col-span-1">Hello</div>
                 <div className="col-start-2 col-end-2">
                     <button
-                        onClick={handleStartQuiz}
+                        onClick={handleOpenModalStartQuiz}
                         // to={`${quizRouter.takeQuiz}/${quizDetail?.slug}`}
                         className="bg-gradient-to-r from-primary to-green-700 text-white rounded hover:opacity-60 duration-300 w-full py-1"
                     >
@@ -87,6 +90,8 @@ const GeneralInformation = ({ quizDetail }) => {
                 </div>
             </div>
         </div>
+         <Modal />
+        </>
     );
 };
 

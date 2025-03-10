@@ -3,11 +3,17 @@ import axiosCredentials from './axios.credential';
 import axiosApplicationJson from './axios.default';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-export const getQuizzes = async () => {
+export const getQuizzes = async (data) => {
     try {
-        const res = await axiosCredentials.get(`/quiz/getQuizzes`);
+        const params = new URLSearchParams()
+        Object.entries(data).forEach(([key,value])=>{
+            if(value != undefined){
+                params.append(key,String(value))
+            }
+        })
+        console.log(`/quiz/mine?${params}`)
+        const res = await axiosCredentials.get(`/quiz/mine?${params}`);
         if (res.status === 200 && res.data) {
-            await delay(2000);
             return res.data.data ?? []; // data 1 là của axios còn data sau là của mình viết api trả về
         }
     } catch (err) {
@@ -18,7 +24,7 @@ export const getQuizzes = async () => {
 };
 export const getQuizDetail = async (id) => {
     try {
-        const res = await axiosCredentials.get(`/quiz/getQuizDetail?id=${id}`);
+        const res = await axiosCredentials.get(`/quiz/detail?id=${id}`);
         if (res.status === 200 && res.data) {
             return res.data.data; // data 1 là của axios còn data sau là của mình viết api trả về
         }
@@ -82,7 +88,7 @@ export const createQuestion = async (data) => {
 };
 export const updateQuizGeneralInfo = async (data) => {
     try {
-        const res = await axiosCredentials.put(`/quiz/updateQuizGeneralInfo`, JSON.stringify(data));
+        const res = await axiosCredentials.put(`/quiz/updateGeneralInfo`, JSON.stringify(data));
         if (res.status === 200 && res.data) {
             return res.data.data;
         }
@@ -97,7 +103,7 @@ export const updateQuizGeneralInfo = async (data) => {
 };
 export const updateQuizQuestion = async (data) => {
     try {
-        const res = await axiosCredentials.put(`/quiz/updateQuizQuestion`, JSON.stringify(data));
+        const res = await axiosCredentials.put(`/quiz/updateQuestion`, JSON.stringify(data));
         if (res.status === 200 && res.data) {
             return res.data.data;
         }
@@ -114,7 +120,7 @@ export const getQuizPreviewBySlug = async (slug) => {
         if (!slug) {
             throw new Error('Lỗi');
         }
-        const res = await axiosApplicationJson.get(`/quiz/getQuizPreview/${slug}`);
+        const res = await axiosApplicationJson.get(`/quiz/preview/${slug}`);
         if (res.status === 200 && res.data) {
             return res.data.data; // data 1 là của axios còn data sau là của mình viết api trả về
         }
@@ -128,7 +134,7 @@ export const getQuizForExamBySlug = async (slug) => {
         if (!slug) {
             throw new Error('Lỗi');
         }
-        const res = await axiosCredentials.get(`/quiz/getQuizForExam/${slug}`);
+        const res = await axiosCredentials.get(`/quiz/forExam/${slug}`);
         if (res.status === 200 && res.data) {
             return res.data.data; // data 1 là của axios còn data sau là của mình viết api trả về
         }
@@ -143,7 +149,7 @@ export const deleteQuiz = async (data) => {
         if (!id) {
             throw new Error('Có lỗi trong quá trình xóa');
         }
-        const res = await axiosCredentials.delete(`/quiz/deleteQuiz/${id}`);
+        const res = await axiosCredentials.delete(`/quiz/${id}/deleteQuiz`);
         if (res.status === 200 && res.data) {
             return res.data.data;
         }
@@ -163,7 +169,7 @@ export const getDiscoveryQuizzes = async (data) => {
                 params.append(key, String(value));
             }
         });
-        const res = await axiosApplicationJson.get(`/quiz/getDiscoveryQuizzes?${params}`);
+        const res = await axiosApplicationJson.get(`/quiz/discovery?${params}`);
         if (res.status === 200 && res.data) {
             return res.data.data;
         }
