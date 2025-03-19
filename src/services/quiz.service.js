@@ -11,7 +11,6 @@ export const getQuizzes = async (data) => {
                 params.append(key,String(value))
             }
         })
-        console.log(`/quiz/mine?${params}`)
         const res = await axiosCredentials.get(`/quiz/mine?${params}`);
         if (res.status === 200 && res.data) {
             return res.data.data ?? []; // data 1 là của axios còn data sau là của mình viết api trả về
@@ -162,9 +161,9 @@ export const deleteQuiz = async (data) => {
 };
 export const getDiscoveryQuizzes = async (data) => {
     try {
-        const { name, page, limit, subject, topic, schoolYear, educationLevel } = data;
+        const { name, page, limit,skip, subject, topic, schoolYear, educationLevel } = data;
         const params = new URLSearchParams();
-        Object.entries({ name, page, limit, subject, topic, schoolYear, educationLevel }).forEach(([key, value]) => {
+        Object.entries({ name, page, limit,skip, subject, topic, schoolYear, educationLevel }).forEach(([key, value]) => {
             if (value !== undefined) {
                 params.append(key, String(value));
             }

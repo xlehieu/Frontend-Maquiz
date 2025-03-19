@@ -13,6 +13,7 @@ import useMutationHooks from '~/hooks/useMutationHooks';
 import QuizCard from '~/components/QuizCard';
 import { handleCountQuestion } from '~/utils';
 import Modal from '~/components/Modal';
+import { PAGE_SIZE } from '~/constants';
 const QuizzesContext = createContext();
 const QuizzesProvider = ({ children }) => {
     const [quizzesData, setQuizzesData] = useState([]);
@@ -39,7 +40,6 @@ const QuizzesProvider = ({ children }) => {
     );
 };
 
-const PAGE_SIZE =12 
 const MyQuizPageMain = () => {
     const { quizzesData, setQuizzesData,isLoading } = useContext(QuizzesContext);
     const navigate = useNavigate();

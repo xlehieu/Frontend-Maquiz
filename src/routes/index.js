@@ -25,7 +25,6 @@ export const publicRoutes = [
     { path: router.discover, component: DiscoverPage, layout: SubLayout, title: 'Khám phá' },
     // { path: router.reviewQuiz, component: QuizPages.ReviewQuizPage, layout: DefaultLayout },
     //Admin
-    ...adminRoutes,
     //Dashboard
     ...userDashboardRoutes,
     ...quizRoutes,

@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { publicRoutes } from './routes';
 import { updateUser } from './redux/slices/user.slice';
@@ -7,6 +7,8 @@ import DefaultLayout from './layouts/DefaultLayout';
 import * as UserService from './services/user.service';
 import './App.css';
 import { useQuery } from '@tanstack/react-query';
+import AdminLayout from './layouts/AdminLayout';
+import adminRoutes from './routes/adminRoutes';
 function App() {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
@@ -52,6 +54,12 @@ function App() {
                             ></Route>
                         );
                     })}
+                    {/* Route Admin */}
+                    <Route path={adminRoutes.path} element={adminRoutes.element}>
+                        {adminRoutes?.children?.map((child,idx)=>(
+                            <Route key={idx} path={child.path} element={child.element} />
+                        ))}
+                    </Route>
                 </Routes>
             </div>
         </BrowserRouter>

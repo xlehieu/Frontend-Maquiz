@@ -9,7 +9,6 @@ const MyLibrary = () => {
         queryKey: ['quizHistoryQuery'],
         queryFn: () => UserService.getUserDetail(),
     });
-    console.log(userQuery.data);
     return (
         <>
             <section className="pb-5">
