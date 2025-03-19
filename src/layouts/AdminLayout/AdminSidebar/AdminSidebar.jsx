@@ -4,23 +4,31 @@ import { Link, useNavigate } from 'react-router-dom';
 import NotificationDropdown from '../../../components/Dropdowns/NotificationDropdown';
 import UserDropdown from '../../../components/Dropdowns/UserDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faBars,
-    faTimes,
-    faFaceSmile,
-} from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faFaceSmile, faChalkboardTeacher, faBookOpen } from '@fortawesome/free-solid-svg-icons';
 import MaquizLogo from '../../../components/MaquizLogo';
 import { adminRouter } from '~/config';
 import BlurBackground from '../../../components/BlurBackground';
 
 const items = [
     {
-        label: 'Người dùng',
+        label: 'Quản lý',
         children: [
             {
-                key:"1.1",
+                key: '1.1',
                 label: 'Danh sách user',
                 icon: faFaceSmile,
+                to: adminRouter.userList,
+            },
+            {
+                key: '1.2',
+                label: 'Danh sách lớp học',
+                icon: faChalkboardTeacher,
+                to: adminRouter.userList,
+            },
+            {
+                key: '1.3',
+                label: 'Danh sách đề thi',
+                icon: faBookOpen,
                 to: adminRouter.userList,
             },
         ],
@@ -28,7 +36,7 @@ const items = [
 ];
 
 export default function AdminSidebar() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [collapseShow, setCollapseShow] = React.useState('hidden');
     const [isShowBg, setIsShowBg] = useState(false);
     return (
@@ -114,10 +122,10 @@ export default function AdminSidebar() {
                                                 <li className="flex" key={i}>
                                                     <button
                                                         key={i}
-                                                        onClick={()=>{
-                                                            navigate(child.to)
+                                                        onClick={() => {
+                                                            navigate(child.to);
                                                         }}
-                                                        className={`pl-8 text-gray-700 flex-1 text-base py-3 px-2 hover:text-primary ease-linear duration-200 transition-all hover:bg-opacity-10 hover:bg-slate-600 hover:rounded-3xl `}
+                                                        className={`pl-8 text-gray-700 flex-1 text-base py-3 px-2 text-left hover:text-primary ease-linear duration-200 transition-all hover:bg-opacity-10 hover:bg-slate-600 hover:rounded-3xl `}
                                                     >
                                                         <FontAwesomeIcon className="mr-2" icon={child.icon} />
                                                         {child.label}

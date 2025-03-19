@@ -29,6 +29,6 @@ export const quizRouter = {
     takeQuiz: '/take-quiz',
 };
 export const adminRouter = {
-    userList:'/user-list'
-}
+    userList: '/admin/users',
+};
 export default router;
