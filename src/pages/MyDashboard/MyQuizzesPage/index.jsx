@@ -3,7 +3,7 @@ import React, { createContext, useCallback, useContext, useEffect, useLayoutEffe
 import * as QuizService from '~/services/quiz.service';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusSquare } from '@fortawesome/free-solid-svg-icons';
-import { message } from 'antd';
+import { message, Pagination } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import router from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,34 +13,35 @@ import useMutationHooks from '~/hooks/useMutationHooks';
 import QuizCard from '~/components/QuizCard';
 import { handleCountQuestion } from '~/utils';
 import Modal from '~/components/Modal';
+import { PAGE_SIZE } from '~/constants';
 const QuizzesContext = createContext();
 const QuizzesProvider = ({ children }) => {
-    const [quizzes, setQuizzes] = useState([]);
+    const [quizzesData, setQuizzesData] = useState([]);
     const quizDispatch = useDispatch();
     const quizzesSelector = useSelector((state) => state.quiz);
     const handleGetQuizzes = async () => {
         if (quizzesSelector.quiz.length <= 0) {
-            const quizSer = await QuizService.getQuizzes();
-            setQuizzes(quizSer);
+            const quizSer = await QuizService.getQuizzes({});
+            setQuizzesData(quizSer);
             quizDispatch(setQuiz(quizSer));
             return quizSer;
         } else {
-            if (!(quizzesSelector.quiz === quizzes)) {
-                setQuizzes(quizzesSelector.quiz);
+            if (!(quizzesSelector.quiz === quizzesData)) {
+                setQuizzesData(quizzesSelector.quiz);
             }
             return quizzesSelector;
         }
     };
-    const quizQuery = useQuery({ queryKey: [''], queryFn: handleGetQuizzes });
+    const quizQuery = useQuery({ queryKey: [''], queryFn: ()=>handleGetQuizzes() });
     return (
-        <QuizzesContext.Provider value={{ quizzes, setQuizzes }}>
-            {quizQuery.isPending ? <LoadingComponent /> : <>{children}</>}
+        <QuizzesContext.Provider value={{ quizzesData, setQuizzesData,isLoading:quizQuery.isLoading }}>
+            {children}
         </QuizzesContext.Provider>
     );
 };
 
 const MyQuizPageMain = () => {
-    const { quizzes, setQuizzes } = useContext(QuizzesContext);
+    const { quizzesData, setQuizzesData,isLoading } = useContext(QuizzesContext);
     const navigate = useNavigate();
     const [isShowModal, setIsShowModal] = useState(false);
     const [deleteQuizId, setDeleteQuizId] = useState(null);
@@ -62,14 +63,19 @@ const MyQuizPageMain = () => {
             deleteQuizMutation.mutate({ id: deleteQuizId });
         }
     }, [deleteQuizId]);
-
+    const getQuizzesMutation = useMutationHooks((data)=>QuizService.getQuizzes(data))
+    const handleGetQuizzes = (skip)=>{
+        if(!isNaN(Number(skip))){
+            getQuizzesMutation.mutate({skip})
+        }
+    }
     // Khi xóa lỗi hoặc xóa thành công bằng mutation
     useEffect(() => {
         if (deleteQuizMutation.isSuccess && deleteQuizMutation.data) {
             const { id } = deleteQuizMutation.data;
             if (id) {
                 dispatch(deleteOneQuiz({ id }));
-                setQuizzes((prevQuizzes) => {
+                setQuizzesData((prevQuizzes) => {
                     prevQuizzes = [...prevQuizzes];
                     return prevQuizzes.filter((q) => q._id !== id);
                 });
@@ -81,7 +87,14 @@ const MyQuizPageMain = () => {
         } else if (deleteQuizMutation.isError) {
             message.error('Xóa bài trắc nghiệm thất bại, vui lòng thử lại');
         }
-    }, [deleteQuizMutation.isSuccess, deleteQuizMutation.data, deleteQuizMutation.isError]);
+    }, [deleteQuizMutation]);
+    useEffect(()=>{
+        if(getQuizzesMutation.isSuccess){
+            setQuizzesData(getQuizzesMutation.data)
+        }
+        else if (getQuizzesMutation){
+        }
+    },[getQuizzesMutation])
     useLayoutEffect(() => {
         window.scrollTo({
             top: 0,
@@ -90,13 +103,16 @@ const MyQuizPageMain = () => {
     }, []);
     return (
         <>
-            <div className="flex justify-between my-5">
+        <div className="flex justify-between my-5">
                 <h4 className="font-semibold text-gray-500">Danh sách đề thi</h4>
             </div>
             <section className="rounded-xl bg-white px-8 py-8 flex gap-10 flex-wrap shadow">
+        <>{
+            isLoading || getQuizzesMutation.isPending ? <LoadingComponent/> :
+            <>
                 <div className="w-full border-b-2 px-9 py-1 flex justify-between">
                     <p className="font-semibold text-xl">
-                        <span className="text-primary mr-2">{quizzes ? quizzes.length : 0}</span>
+                        <span className="text-primary mr-2">{quizzesData?.length || 0}</span>
                         <span className="text-slate-600">Đề thi</span>
                     </p>
                     <button
@@ -108,8 +124,8 @@ const MyQuizPageMain = () => {
                     </button>
                 </div>
                 <div className="grid w-full h-full grid-cols-2 gap-4 px-0 pb-4 sm:grid-cols-3 md:grid-cols-4  2xl:grid-cols-5">
-                    {quizzes?.length > 0
-                        ? quizzes.map((quiz, index) => (
+                    {quizzesData?.quizzes?.length > 0
+                        ? quizzesData?.quizzes?.map((quiz, index) => (
                               <QuizCard
                                   key={index}
                                   title={quiz.name}
@@ -124,6 +140,9 @@ const MyQuizPageMain = () => {
                           ))
                         : 'Không thấy đề thi nào 😟😟😟😟'}
                 </div>
+            </>
+        }</>
+                <Pagination align='end' onChange={(e)=>handleGetQuizzes(e)} defaultCurrent={1} defaultPageSize={PAGE_SIZE} total={quizzesData?.total ||PAGE_SIZE}/>
             </section>
             <Modal
                 isShow={isShowModal}

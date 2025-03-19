@@ -12,6 +12,9 @@ import * as UserService from '~/services/user.service';
 import { useDispatch } from 'react-redux';
 import { handleCountQuestion } from '~/utils';
 import { favoriteQuiz } from '~/redux/slices/user.slice';
+import LoadingComponent from '~/components/LoadingComponent';
+import { Pagination } from 'antd';
+import { PAGE_SIZE } from '~/constants';
 const items = [
     {
         label: 'Cá nhân',
@@ -46,17 +49,10 @@ const items = [
 const QuizzesContext = createContext();
 const QuizzesProvider = ({ children }) => {
     const [quizzes, setQuizzes] = useState([]);
-    const [searchValue, setSearchValue] = useState('');
-    const debouncedValueSearch = useDebounce(searchValue);
-    const findQuizMutation = useMutationHooks((data) => QuizService.getDiscoveryQuizzes(data));
-    useEffect(() => {
-        if (debouncedValueSearch.trim()) findQuizMutation.mutate({ name: debouncedValueSearch });
-    }, [debouncedValueSearch]);
-    useEffect(() => {
-        setQuizzes(findQuizMutation.data ?? []);
-    }, [findQuizMutation.data]);
     return (
-        <QuizzesContext.Provider value={{ quizzes, searchValue, setSearchValue }}>{children}</QuizzesContext.Provider>
+        <QuizzesContext.Provider value={{ quizzes,setQuizzes}}>
+            {children}
+        </QuizzesContext.Provider>
     );
 };
 const SideBar = () => {
@@ -89,13 +85,25 @@ const SideBar = () => {
     );
 };
 const MainResult = () => {
-    const { quizzes, searchValue, setSearchValue } = useContext(QuizzesContext);
-    const dispatch = useDispatch();
-    const userInfo = useSelector((state) => state.user);
-    console.log(userInfo);
-    
+    const { quizzes ,setQuizzes} = useContext(QuizzesContext);
+    const [searchValue, setSearchValue] = useState('');
+    const debouncedValueSearch = useDebounce(searchValue);
+    const findQuizMutation = useMutationHooks((data) => QuizService.getDiscoveryQuizzes(data));
+    useEffect(() => {
+        if (debouncedValueSearch.trim()) findQuizMutation.mutate({ name: debouncedValueSearch });
+    }, [debouncedValueSearch]);
+    useEffect(() => {
+        setQuizzes(findQuizMutation.data ?? []);
+    }, [findQuizMutation.data]);
+    useEffect(()=>{
+        findQuizMutation.mutate({skip:0,limit:1})
+    },[])
+    const handleChangePage = (e)=>{
+        findQuizMutation.mutate({skip:e-1,limit:1})
+    }
     return (
         <section className="rounded-lg px-3 py-4 flex-1 bg-white shadow-xl">
+                {findQuizMutation.isPending ? <LoadingComponent/>:<>  
             <div className="flex justify-between border-b pb-2">
                 <div className="flex items-center rounded-md px-2 py-1 border border-gray-400 text-gray-700 focus-within:border-primary focus-within:shadow">
                     <FontAwesomeIcon icon={faSearch} className="text-gray-700" />
@@ -108,9 +116,9 @@ const MainResult = () => {
                 </div>
             </div>
             <div className="grid w-full grid-cols-2 gap-4 px-0 py-10 sm:grid-cols-3 md:grid-cols-4  2xl:grid-cols-5">
-                {quizzes?.length > 0 && (
+                {quizzes?.quizzes?.length > 0 && (
                     <>
-                        {quizzes.map((quiz, index) => (
+                        {quizzes?.quizzes?.map((quiz, index) => (
                             <QuizCard
                                 key={index}
                                 title={quiz.name}
@@ -124,6 +132,9 @@ const MainResult = () => {
                     </>
                 )}
             </div>
+            </>}
+            <Pagination align='end' onChange={(e)=>handleChangePage(e)} defaultCurrent={1} defaultPageSize={1} total={quizzes?.total ||PAGE_SIZE}/>
+            
         </section>
     );
 };
@@ -131,7 +142,7 @@ const DiscoverPage = () => {
     return (
         <QuizzesProvider>
             <div className="relative">
-                <h1 className="text-xl font-medium text-gray-700">Tìm kiếm đề thi</h1>
+                <h1 className="text-xl font-medium text-gray-700 pb-3">Khám phá đề thi</h1>
                 <div className="flex flex-row space-x-4">
                     <SideBar />
                     <MainResult />

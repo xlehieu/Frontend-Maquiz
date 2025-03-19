@@ -121,3 +121,4 @@ export const topics = [];
 export const CONSTANTS_KEY_LOCAL_STORAGE = {
     quizzes_access_history: 'quiz_access_history',
 };
+export const PAGE_SIZE =12 

@@ -87,3 +87,20 @@ export const getMyFavoriteQuiz = async () => {
         throw new Error(err.response.data.message);
     }
 };
+
+export const getQuizzesAccessHistory = async (data)=>{
+    try{
+        const params = new URLSearchParams()
+        Object.entries(data).forEach(([key,value])=>{
+            if(value !==undefined){
+                params.append(key,value)
+            }
+        })
+        const res = await axiosCredentials.get(`/user/quizz-access-history?${params}`)
+        if(res)
+            return res?.data?.data
+    }
+    catch(err){
+        throw new Error(err.response.data.message);
+    }
+}

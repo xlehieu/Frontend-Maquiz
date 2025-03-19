@@ -28,4 +28,7 @@ export const quizRouter = {
     reviewQuiz: '/review-quiz',
     takeQuiz: '/take-quiz',
 };
+export const adminRouter = {
+    userList:'/user-list'
+}
 export default router;

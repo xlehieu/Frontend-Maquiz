@@ -1,8 +1,8 @@
 /*eslint-disable*/
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import NotificationDropdown from '../Dropdowns/NotificationDropdown';
-import UserDropdown from '../Dropdowns/UserDropdown';
+import React, { memo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import NotificationDropdown from '../../../components/Dropdowns/NotificationDropdown';
+import UserDropdown from '../../../components/Dropdowns/UserDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faBars,
@@ -17,27 +17,25 @@ import {
     faSearch,
     faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import MaquizLogo from '../MaquizLogo';
+import MaquizLogo from '../../../components/MaquizLogo';
 import { userDashboardRouter } from '~/config';
-import BlurBackground from '../BlurBackground';
+import BlurBackground from '../../../components/BlurBackground';
 
 const items = [
     {
         label: 'Cá nhân',
         children: [
             {
+                key:'1.1',
                 label: 'Thư viện của tôi',
                 icon: faHouse,
                 to: userDashboardRouter.myDashboard,
             },
             {
+                key:'1.2',
                 label: 'Truy cập gần đây',
                 icon: faClockRotateLeft,
                 to: userDashboardRouter.historyAccess,
-            },
-            {
-                label: 'Đề thi yêu thích ',
-                icon: faHeart,
             },
         ],
     },
@@ -45,11 +43,13 @@ const items = [
         label: 'Quản lý',
         children: [
             {
+                key:'2.1',
                 label: 'Đề thi',
                 icon: faBookOpen,
                 to: userDashboardRouter.myQuiz,
             },
             {
+                key:'2.2',
                 label: 'Lớp học',
                 icon: faChalkboardUser,
                 to: userDashboardRouter.classroom,
@@ -58,7 +58,8 @@ const items = [
     },
 ];
 
-export default function Sidebar() {
+const UserSidebar = ()=> {
+    const navigate = useNavigate()
     const [collapseShow, setCollapseShow] = React.useState('hidden');
     const [isShowBg, setIsShowBg] = useState(false);
     return (
@@ -142,14 +143,16 @@ export default function Sidebar() {
                                         <ul className="flex flex-col">
                                             {item.children.map((child, i) => (
                                                 <li className="flex" key={i}>
-                                                    <Link
+                                                    <button
                                                         key={i}
-                                                        to={child.to}
-                                                        className="pl-8 text-gray-700 flex-1 text-base py-3 px-2 hover:text-primary ease-linear duration-200 transition-all hover:bg-opacity-10 hover:bg-slate-600 hover:rounded-3xl"
+                                                        onClick={()=>{
+                                                            navigate(child.to)
+                                                        }}
+                                                        className={`pl-8 text-gray-700 flex-1 text-base py-3 px-2 hover:text-primary ease-linear duration-200 transition-all hover:bg-opacity-10 hover:bg-slate-600 hover:rounded-3xl`}
                                                     >
                                                         <FontAwesomeIcon className="mr-2" icon={child.icon} />
                                                         {child.label}
-                                                    </Link>
+                                                    </button>
                                                 </li>
                                             ))}
                                         </ul>
@@ -164,3 +167,4 @@ export default function Sidebar() {
         </>
     );
 }
+export default memo(UserSidebar)

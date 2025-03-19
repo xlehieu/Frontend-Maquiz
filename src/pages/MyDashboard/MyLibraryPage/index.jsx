@@ -9,12 +9,12 @@ const MyLibrary = () => {
         queryKey: ['quizHistoryQuery'],
         queryFn: () => UserService.getUserDetail(),
     });
-    console.log(userQuery.data);
     return (
         <>
             <section className="pb-5">
                 <h1 className="text-3xl font-bold text-pink-300 text-center my-5">Đề thi yêu thích</h1>
                 <div className="bg-white px-3 pt-3 pb-10 border rounded-lg shadow-md">
+                    <div className='grid grid-cols-2 md:grid-cols-4 2xl:grid-cols-5 gap-5'>
                     {userQuery?.data?.favoriteQuiz?.map((quiz, index) => (
                         <QuizCard
                             key={index}
@@ -25,8 +25,10 @@ const MyLibrary = () => {
                             onDelete={false}
                             examCount={quiz.examCount}
                             questionCount={quiz.questionCount || '...'}
+                            id={quiz._id}
                         />
                     ))}
+                    </div>
                 </div>
             </section>
             <section className="pb-5">
