@@ -1,6 +1,6 @@
-import axiosCredentials from './axios.credential';
+import axiosCredentials from '../axios.credential';
 
-export const getUserList = async (data) => {
+export const getClassroomList = async (data) => {
     try {
         const { skip, limit } = data;
         const params = new URLSearchParams();
@@ -9,7 +9,7 @@ export const getUserList = async (data) => {
                 params.append(key, value);
             }
         });
-        const response = await axiosCredentials.get(`/admin/user-management/userList?${params}`);
+        const response = await axiosCredentials.get(`/admin/classroom-management/classroomList?${params}`);
         if (response.data) {
             return response.data.data;
         }
@@ -18,11 +18,11 @@ export const getUserList = async (data) => {
         if (err.response) throw new Error(err.response.data.message);
     }
 };
-export const changeActiveUser = async (data) => {
+export const changeClassroomDisabled = async (data) => {
     try {
         const { id } = data;
         if (!id) return null;
-        const res = await axiosCredentials.patch(`/admin/user-management/activeUser/${id}`);
+        const res = await axiosCredentials.patch(`/admin/classroom-management/disabledClassroom/${id}`);
         if (res.data) {
             return res.data;
         }
@@ -30,5 +30,3 @@ export const changeActiveUser = async (data) => {
         if (err.response) throw err.response.data.message;
     }
 };
-
-export const verifyAdmin = async () => {};

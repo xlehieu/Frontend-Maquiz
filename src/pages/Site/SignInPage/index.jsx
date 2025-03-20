@@ -14,7 +14,7 @@ const SignInPage = () => {
     const navigate = useNavigate();
     const emailCookie = Cookies.get('user_email');
     const [isShowPassword, setIsShowPassword] = useState(false);
-    const [emailValue, setEmailValue] = useState(emailCookie|| "");
+    const [emailValue, setEmailValue] = useState(emailCookie == 'undefined' || !emailCookie ? '' : emailCookie);
     const [passwordValue, setPasswordValue] = useState('');
     const dispatch = useDispatch();
 

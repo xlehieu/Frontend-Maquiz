@@ -12,6 +12,8 @@ axiosCredentials.interceptors.response.use(
         if (error.response?.status === 401) {
             window.location.href = '/dang-nhap';
             return;
+        } else if (error.response?.status === 403) {
+            window.location.href = '/page-not-found';
         }
         return Promise.reject(error); // Trả về l��i nếu có l��i
     },

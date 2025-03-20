@@ -26,13 +26,13 @@ const items = [
         label: 'Cá nhân',
         children: [
             {
-                key:'1.1',
+                key: '1.1',
                 label: 'Thư viện của tôi',
                 icon: faHouse,
                 to: userDashboardRouter.myDashboard,
             },
             {
-                key:'1.2',
+                key: '1.2',
                 label: 'Truy cập gần đây',
                 icon: faClockRotateLeft,
                 to: userDashboardRouter.historyAccess,
@@ -43,13 +43,13 @@ const items = [
         label: 'Quản lý',
         children: [
             {
-                key:'2.1',
+                key: '2.1',
                 label: 'Đề thi',
                 icon: faBookOpen,
                 to: userDashboardRouter.myQuiz,
             },
             {
-                key:'2.2',
+                key: '2.2',
                 label: 'Lớp học',
                 icon: faChalkboardUser,
                 to: userDashboardRouter.classroom,
@@ -58,8 +58,8 @@ const items = [
     },
 ];
 
-const UserSidebar = ()=> {
-    const navigate = useNavigate()
+const UserSidebar = () => {
+    const navigate = useNavigate();
     const [collapseShow, setCollapseShow] = React.useState('hidden');
     const [isShowBg, setIsShowBg] = useState(false);
     return (
@@ -145,10 +145,10 @@ const UserSidebar = ()=> {
                                                 <li className="flex" key={i}>
                                                     <button
                                                         key={i}
-                                                        onClick={()=>{
-                                                            navigate(child.to)
+                                                        onClick={() => {
+                                                            navigate(child.to);
                                                         }}
-                                                        className={`pl-8 text-gray-700 flex-1 text-base py-3 px-2 hover:text-primary ease-linear duration-200 transition-all hover:bg-opacity-10 hover:bg-slate-600 hover:rounded-3xl`}
+                                                        className={`pl-8 text-gray-700 flex-1 text-base text-left py-3 px-2 hover:text-primary ease-linear duration-200 transition-all hover:bg-opacity-10 hover:bg-slate-600 hover:rounded-3xl`}
                                                     >
                                                         <FontAwesomeIcon className="mr-2" icon={child.icon} />
                                                         {child.label}
@@ -166,5 +166,5 @@ const UserSidebar = ()=> {
             <BlurBackground isActive={isShowBg} onClick={() => setIsShowBg(false)} />
         </>
     );
-}
-export default memo(UserSidebar)
+};
+export default memo(UserSidebar);
