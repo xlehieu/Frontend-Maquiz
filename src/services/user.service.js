@@ -30,6 +30,7 @@ export const getUserDetail = async () => {
         }
         return null;
     } catch (err) {
+        console.log(err);
         throw new Error(err.response.data.message);
     }
 };
