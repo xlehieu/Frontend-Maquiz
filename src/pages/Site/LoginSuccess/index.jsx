@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 import siteRouter from '~/config';
 import LoadingComponent from '~/components/LoadingComponent';
 
 const LoginSuccess = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
