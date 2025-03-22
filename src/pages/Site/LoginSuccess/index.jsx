@@ -12,7 +12,7 @@ const LoginSuccess = () => {
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const token = params.get('access_token');
-
+        console.log(token);
         if (token) {
             // Lưu token vào cookie
             Cookies.set('access_token', token, { expires: 7, secure: true });
