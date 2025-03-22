@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { DashboardOutlined, IdcardOutlined, LogoutOutlined } from '@ant-design/icons';
 import * as UserService from '~/services/user.service';
 import { resetUser } from '~/redux/slices/user.slice';
-import router, { userDashboardRouter } from '~/config';
+import siteRouter, { userDashboardRouter } from '~/config';
 import Tippy from '@tippyjs/react/headless';
 import MaquizLogo from '../../../components/MaquizLogo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,7 +29,7 @@ const HeaderComponent = () => {
         <header className="w-full border-b-2 bg-white">
             <div className={'container mx-auto flex justify-between items-centers px-5 py-4'}>
                 <div className="block">
-                    <Link to={router.home}>
+                    <Link to={siteRouter.home}>
                         <MaquizLogo className="w-2/4" alt="logo" />
                     </Link>
                 </div>
@@ -42,7 +42,7 @@ const HeaderComponent = () => {
                     </Link>
                     <Link
                         className="w-24 flex items-center justify-center text-primary text-lg  duration-300 hover:text-secondary"
-                        to={router.contact}
+                        to={siteRouter.contact}
                     >
                         Liên hệ
                     </Link>
@@ -54,7 +54,7 @@ const HeaderComponent = () => {
                                 <div className="flex flex-col shadow bg-white" tabIndex="-1" {...attrs}>
                                     <Link
                                         className="text-black px-2 py-2 hover:rounded hover:bg-black hover:bg-opacity-5"
-                                        to={router.profile}
+                                        to={siteRouter.profile}
                                     >
                                         <IdcardOutlined className="pr-2" />
                                         Thông tin tài khoản
@@ -91,7 +91,7 @@ const HeaderComponent = () => {
                     ) : (
                         <Link
                             className="w-24 flex items-center justify-center text-primary text-lg duration-300 hover:text-secondary"
-                            to={router.signIn}
+                            to={siteRouter.signIn}
                         >
                             Đăng nhập
                         </Link>
@@ -130,7 +130,7 @@ const HeaderComponent = () => {
                                     <>
                                         <Link
                                             className="mt-10 w-full px-6 py-3 text-gray-600 font-semibold border-b-2 transition-all duration-300"
-                                            to={router.profile}
+                                            to={siteRouter.profile}
                                         >
                                             Thông tin tài khoản
                                         </Link>
@@ -149,7 +149,7 @@ const HeaderComponent = () => {
                                     </>
                                 ) : (
                                     <Link
-                                        to={router.signIn}
+                                        to={siteRouter.signIn}
                                         className="mt-10 w-full px-6 py-3 text-gray-600 font-semibold border-b-2 transition-all duration-300"
                                     >
                                         Đăng nhập

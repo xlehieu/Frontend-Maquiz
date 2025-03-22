@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import Button from '~/components/Button';
-import router from '~/config';
+import siteRouter from '~/config';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMountainSun, faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -26,7 +26,7 @@ export default function HomePage() {
                 <div className="row-span-1 grid grid-cols-2 grid-flow-col">
                     {user.email && user.email !== '' && (
                         <div className="col-span-1 flex justify-center">
-                            <Link className="bg-primary rounded px-2 py-1 text-white" to={router.createQuiz}>
+                            <Link className="bg-primary rounded px-2 py-1 text-white" to={siteRouter.createQuiz}>
                                 Tạo đề thi ngay
                             </Link>
                         </div>
@@ -34,7 +34,7 @@ export default function HomePage() {
                     <div className="col-span-1 flex justify-center">
                         <button
                             className="rounded bg-primary px-3 py-1 text-white"
-                            onClick={() => navigate(router.discover)}
+                            onClick={() => navigate(siteRouter.discover)}
                         >
                             <FontAwesomeIcon icon={faMountainSun} className="mr-2" />
                             Khám phá

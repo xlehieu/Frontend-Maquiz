@@ -4,7 +4,7 @@ import Tippy from '@tippyjs/react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGauge, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
-import router, { userDashboardRouter } from '~/config';
+import siteRouter, { userDashboardRouter } from '~/config';
 
 const UserDropdown = ({ user }) => {
     // dropdown props
@@ -38,7 +38,7 @@ const UserDropdown = ({ user }) => {
                     <div className="flex flex-col shadow bg-white" tabIndex="-1">
                         <Link
                             className="text-gray-600 duration-200 px-2 py-2 hover:rounded hover:bg-black hover:bg-opacity-5"
-                            to={router.profile}
+                            to={siteRouter.profile}
                         >
                             <FontAwesomeIcon icon={faUser} className="pr-2" />
                             Thông tin tài khoản

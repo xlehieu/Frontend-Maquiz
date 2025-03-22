@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import router from '~/config';
+import siteRouter from '~/config';
 import * as VerifyService from '~/services/verify.service';
 import LoadingComponent from '../LoadingComponent';
 const AdminGuard = ({ children }) => {

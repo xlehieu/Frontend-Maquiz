@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
 import { Link } from 'react-router-dom';
-import router, { userDashboardRouter } from '~/config';
+import siteRouter, { userDashboardRouter } from '~/config';
 import * as UserService from '~/services/user.service';
 import useMutationHooks from '~/hooks/useMutationHooks';
 export default function UserNavbar({ user }) {
@@ -48,7 +48,7 @@ export default function UserNavbar({ user }) {
                             <div className="flex flex-col items-center bg-white rounded-md shadow">
                                 <Link
                                     className="text-sm py-2 px-3 list-none text-left min-w-48 hover:bg-gray-100"
-                                    to={router.profile}
+                                    to={siteRouter.profile}
                                 >
                                     Thông tin tài khoản
                                 </Link>

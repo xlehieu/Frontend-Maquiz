@@ -1,4 +1,4 @@
-const router = {
+const siteRouter = {
     home: '/',
     contact: '/lien-he',
     signIn: '/dang-nhap',
@@ -7,12 +7,7 @@ const router = {
     createQuiz: '/tao-de-thi',
     notFoundPage: '/*',
     discover: '/discovery',
-    admin: '/tui-la-admin',
-    adminProduct: '/tui-la-admin/products',
-    adminProductCreate: '/tui-la-admin/products/create',
-    adminProductDetail: '/tui-la-admin/products/detail/:id',
-    adminProductUpdate: '/tui-la-admin/products/update',
-    adminProductDelete: '/tui-la-admin/products/delete',
+    loginSuccess: '/login-success',
 };
 export const userDashboardRouter = {
     myDashboard: '/my-dashboard',
@@ -33,4 +28,4 @@ export const adminRouter = {
     classroomList: '/admin/classrooms-management',
     quizList: '/admin/quizzes-management',
 };
-export default router;
+export default siteRouter;

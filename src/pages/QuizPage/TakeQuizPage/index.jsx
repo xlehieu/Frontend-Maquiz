@@ -13,7 +13,7 @@ import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 import { questionTypeContent } from '~/constants';
 import HTMLReactParser from 'html-react-parser';
 import LoadingComponent from '~/components/LoadingComponent';
-import router from '~/config';
+import siteRouter from '~/config';
 import { useQuery } from '@tanstack/react-query';
 import useMutationHooks from '~/hooks/useMutationHooks';
 import * as QuizHistoryService from '~/services/quizHistory.service';
@@ -701,7 +701,7 @@ const TakeQuizPageMain = () => {
                                 <h4 className="">Điểm của bạn là:</h4>
                                 <p className="text-9xl my-5 font-semibold text-primary">{score}</p>
                                 <Link
-                                    to={router.discover}
+                                    to={siteRouter.discover}
                                     className="bg-primary text-3xl px-3 py-3 mt-6 md:px-2 md:py-2 md:mt-4 z-20 absolute text-white font-bold md:text-lg rounded-md bottom-5"
                                 >
                                     OK

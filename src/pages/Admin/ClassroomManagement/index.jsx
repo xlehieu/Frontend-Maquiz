@@ -33,7 +33,7 @@ const classroomManageReducer = (state, action) => {
 };
 const ClassroomManagement = () => {
     const [classroomList, dispatchQuizzesList] = useReducer(classroomManageReducer, []);
-    const [totalQuiz, setTotalQuiz] = useState(0);
+    const [totalClassroom, setTotalClassroom] = useState(0);
     const classroomListQuery = useQuery({
         queryKey: ['quizzesListQuery'],
         queryFn: () => ClassroomManagementService.getClassroomList({}),
@@ -41,7 +41,7 @@ const ClassroomManagement = () => {
     const getClassroomsListMutation = useMutationHooks((data) => ClassroomManagementService.getClassroomList(data));
     useEffect(() => {
         if (classroomListQuery.data) {
-            setTotalQuiz(classroomListQuery.data?.total);
+            setTotalClassroom(classroomListQuery.data?.total);
             dispatchQuizzesList({
                 type: active_type.SET_CLASSROOM_LIST,
                 payload: {
@@ -82,7 +82,12 @@ const ClassroomManagement = () => {
     return (
         <>
             <section className="p-6 overflow-x-scroll px-0 pt-0 pb-2">
-                <h1 className="text-2xl my-5 text-gray-700">DANH SÁCH ĐỀ TRẮC NGHIỆM</h1>
+                <div className="flex justify-between items-center">
+                    <h1 className="text-2xl my-5 text-gray-700">DANH SÁCH LỚP HỌC</h1>
+                    <p className="text-lg">
+                        Tổng số: <span className="text-primary text-xl">{totalClassroom}</span>
+                    </p>
+                </div>
                 <table className="w-full min-w-[640px] table-auto">
                     <thead>
                         <tr>
@@ -172,7 +177,7 @@ const ClassroomManagement = () => {
                     onChange={(e) => handlePageChange(e)}
                     defaultCurrent={1}
                     defaultPageSize={PAGE_SIZE}
-                    total={totalQuiz || PAGE_SIZE}
+                    total={totalClassroom || PAGE_SIZE}
                 />
             </section>
         </>

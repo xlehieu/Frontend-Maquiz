@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 import { message, Pagination } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import router from '~/config';
+import siteRouter from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteOneQuiz, setQuiz } from '~/redux/slices/quiz.slice';
 import LoadingComponent from '~/components/LoadingComponent';
@@ -117,7 +117,7 @@ const MyQuizPageMain = () => {
                                     <span className="text-slate-600">Đề thi</span>
                                 </p>
                                 <button
-                                    onClick={() => navigate(router.createQuiz)}
+                                    onClick={() => navigate(siteRouter.createQuiz)}
                                     className="px-2 py-1 text-primary font-semibold rounded border-primary border-2 hover:text-primary hover:opacity-55 transition-all duration-200"
                                 >
                                     <FontAwesomeIcon icon={faPlusSquare} className="mr-1" />

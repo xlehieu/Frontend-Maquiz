@@ -56,7 +56,7 @@ function App() {
                     })}
                     {/* Route Admin */}
                     <Route path={adminRoutes.path} element={adminRoutes.element}>
-                        {adminRoutes?.children?.map((child,idx)=>(
+                        {adminRoutes?.children?.map((child, idx) => (
                             <Route key={idx} path={child.path} element={child.element} />
                         ))}
                     </Route>

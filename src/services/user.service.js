@@ -1,6 +1,7 @@
 import axios from 'axios';
 import axiosCredentials from './axios.credential';
 import axiosNoInterceptor from './axios.nointerceptor';
+
 export const login = async (data) => {
     try {
         const { email, password } = data;
@@ -15,6 +16,9 @@ export const login = async (data) => {
             throw new Error(err.response.data.message); // Ném lỗi để xử lý ở nơi gọi hàm login
         }
     }
+};
+export const loginWithGoogle = async () => {
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google`;
 };
 //sử dụng headers để truyền token và thằng middleware phía backend sẽ nhận được token
 //để kiểm tra xem có quyền lấy data người dùng không
@@ -88,19 +92,17 @@ export const getMyFavoriteQuiz = async () => {
     }
 };
 
-export const getQuizzesAccessHistory = async (data)=>{
-    try{
-        const params = new URLSearchParams()
-        Object.entries(data).forEach(([key,value])=>{
-            if(value !==undefined){
-                params.append(key,value)
+export const getQuizzesAccessHistory = async (data) => {
+    try {
+        const params = new URLSearchParams();
+        Object.entries(data).forEach(([key, value]) => {
+            if (value !== undefined) {
+                params.append(key, value);
             }
-        })
-        const res = await axiosCredentials.get(`/user/quizz-access-history?${params}`)
-        if(res)
-            return res?.data?.data
-    }
-    catch(err){
+        });
+        const res = await axiosCredentials.get(`/user/quizz-access-history?${params}`);
+        if (res) return res?.data?.data;
+    } catch (err) {
         throw new Error(err.response.data.message);
     }
-}
+};

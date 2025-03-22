@@ -80,7 +80,12 @@ const QuizManagement = () => {
     return (
         <>
             <section className="p-6 overflow-x-scroll px-0 pt-0 pb-2">
-                <h1 className="text-2xl my-5 text-gray-700">DANH SÁCH ĐỀ TRẮC NGHIỆM</h1>
+                <div className="flex justify-between items-center">
+                    <h1 className="text-2xl my-5 text-gray-700">DANH SÁCH ĐỀ TRẮC NGHIỆM</h1>
+                    <p className="text-lg">
+                        Tổng số: <span className="text-primary text-xl">{totalQuiz}</span>
+                    </p>
+                </div>
                 <table className="w-full min-w-[640px] table-auto">
                     <thead>
                         <tr>
