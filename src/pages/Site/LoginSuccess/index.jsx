@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
@@ -6,25 +6,17 @@ import siteRouter from '~/config';
 import LoadingComponent from '~/components/LoadingComponent';
 
 const LoginSuccess = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const token = params.get('access_token');
-        console.log(token);
-        if (token) {
-            // Lưu token vào cookie
-            Cookies.set('access_token', token, { expires: 7, secure: true });
-
-            // Chuyển hướng đến trang Profile
+        const countDown = setTimeout(() => {
+            setLoading(false);
             navigate(siteRouter.home);
-        } else {
-            navigate(siteRouter.signIn);
-        }
-    }, [location, navigate]);
+        }, 2000);
+        return () => clearTimeout(countDown);
+    }, []);
 
-    return <LoadingComponent />;
+    return <>{loading && <LoadingComponent />}</>;
 };
 
 export default LoginSuccess;
