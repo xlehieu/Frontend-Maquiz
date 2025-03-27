@@ -93,6 +93,7 @@ const MainResult = () => {
                                         imageSrc={quiz.thumb}
                                         id={quiz._id}
                                         slug={quiz.slug}
+                                        questionCount={quiz.questionCount}
                                     />
                                 ))}
                             </>
