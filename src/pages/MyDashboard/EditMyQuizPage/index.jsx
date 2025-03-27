@@ -81,7 +81,7 @@ const EditGeneralInformationTab = () => {
         updateQuizGeneralMutation.mutate({
             id: quizDetail._id,
             name: quizName,
-            desc: quizDesc,
+            description: quizDesc,
             subject: quizSubject,
             school: quizSchool,
             thumb: imageUrl,
