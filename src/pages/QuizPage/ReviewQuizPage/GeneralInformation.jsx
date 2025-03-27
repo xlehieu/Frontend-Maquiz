@@ -24,73 +24,97 @@ const GeneralInformation = ({ quizDetail }) => {
     };
     return (
         <>
-           
-        <div className="px-2 py-2 rounded-sm shadow-md border bg-white">
-            <h6 className="font-semibold">Thông tin đề thi</h6>
-            <div className="grid grid-cols-3 mt-2 gap-3">
-                <div className="col-span-1">
-                    <LazyImage
-                        alt={quizDetail?.name}
-                        src={quizDetail?.thumb}
-                        className="w-full h-52 object-cover rounded"
-                    />
-                </div>
-                <div className="col-span-1">
-                    <div className="flex flex-col gap-3">
-                        <p className="font-semibold text-lg">{quizDetail?.name}</p>
-                        <div className="mt-2">
-                            <LazyImage
-                                className="w-9 h-9 rounded-full overflow-hidden"
-                                src={quizDetail?.user?.avatar}
-                                alt={`avatar ${quizDetail?.user?.name}`}
-                            />
-                            <p className="inline ml-2">{quizDetail?.user?.name}</p>
-                        </div>
-                        {quizDetail?.createdAt && (
+            <div className="px-2 py-2 rounded-sm shadow-md border bg-white">
+                <h6 className="font-semibold">Thông tin đề thi</h6>
+                <div className="grid grid-cols-3 mt-2 gap-3">
+                    <div className="col-span-1">
+                        <LazyImage
+                            alt={quizDetail?.name}
+                            src={quizDetail?.thumb}
+                            className="w-full h-full object-cover rounded border"
+                        />
+                    </div>
+                    <div className="col-span-1">
+                        <div className="flex flex-col gap-3">
+                            <p className="font-semibold text-lg">{quizDetail?.name}</p>
                             <div className="mt-2">
-                                <FontAwesomeIcon icon={faClock} className="text-lg inline" />
-                                <p className="inline ml-2">
-                                    {quizDetail?.createdAt && dayjs(quizDetail?.createdAt).format('DD/MM/YYYY')}
-                                </p>
+                                <LazyImage
+                                    className="w-9 h-9 rounded-full overflow-hidden"
+                                    src={quizDetail?.user?.avatar}
+                                    alt={`avatar ${quizDetail?.user?.name}`}
+                                />
+                                <p className="inline ml-2">{quizDetail?.user?.name}</p>
                             </div>
-                        )}
-                        <div className="mt-2 flex gap-4">
-                            <Popover content={'Số câu hỏi'} trigger="hover">
-                                <>
-                                    <FontAwesomeIcon icon={faQuestionCircle} className="mr-2 text-yellow-500" />
-                                    {handleCountQuestion}
-                                </>
-                            </Popover>
-                            <Popover content={'Lượt thi'} trigger="hover">
-                                <FontAwesomeIcon icon={faBookOpenReader} className="mr-2 text-green-500" />
-                                {quizDetail?.examCount}
-                            </Popover>
-                            <Popover content={'Lượt truy cập'} trigger="hover">
-                                <FontAwesomeIcon icon={faChartSimple} className="mr-2 text-blue-500" />
-                                {quizDetail?.accessCount}
-                            </Popover>
+                            {quizDetail?.createdAt && (
+                                <div className="mt-2">
+                                    <FontAwesomeIcon icon={faClock} className="text-lg inline" />
+                                    <p className="inline ml-2">
+                                        {quizDetail?.createdAt && dayjs(quizDetail?.createdAt).format('DD/MM/YYYY')}
+                                    </p>
+                                </div>
+                            )}
+                            <div className="mt-2 flex gap-4">
+                                <Popover content={'Số câu hỏi'} trigger="hover">
+                                    <>
+                                        <FontAwesomeIcon icon={faQuestionCircle} className="mr-2 text-yellow-500" />
+                                        {handleCountQuestion}
+                                    </>
+                                </Popover>
+                                <Popover content={'Lượt thi'} trigger="hover">
+                                    <FontAwesomeIcon icon={faBookOpenReader} className="mr-2 text-green-500" />
+                                    {quizDetail?.examCount}
+                                </Popover>
+                                <Popover content={'Lượt truy cập'} trigger="hover">
+                                    <FontAwesomeIcon icon={faChartSimple} className="mr-2 text-blue-500" />
+                                    {quizDetail?.accessCount}
+                                </Popover>
+                            </div>
+                            {quizDetail?.school && (
+                                <div className="mt-2">
+                                    <p className="font-medium">Trường học: {quizDetail?.school}</p>
+                                </div>
+                            )}
                         </div>
-                        {quizDetail?.school && (
-                            <div className="mt-2">
-                                <p className="font-medium">Trường học: {quizDetail?.school}</p>
-                            </div>
-                        )}
+                    </div>
+                    <div className="col-span-1">
+                        <div className="flex flex-col gap-3">
+                            {quizDetail.topic && (
+                                <div className="mt-2">
+                                    <p className="font-medium h-20 overflow-scroll">Chủ đề: {quizDetail.topic}</p>
+                                </div>
+                            )}
+                            {quizDetail.schoolYear && (
+                                <div className="mt-2">
+                                    <p className="font-medium h-20 overflow-scroll">Năm học: {quizDetail.schoolYear}</p>
+                                </div>
+                            )}
+                            {quizDetail.educationLevel && (
+                                <div className="mt-2">
+                                    <p className="font-medium h-20 overflow-scroll">
+                                        Trình độ: {quizDetail.educationLevel}
+                                    </p>
+                                </div>
+                            )}
+                            {quizDetail.description && (
+                                <div className="mt-2">
+                                    <p className="font-medium h-20 overflow-scroll">Mô tả: {quizDetail.description}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="col-start-2 col-end-2">
+                        <button
+                            onClick={handleOpenModalStartQuiz}
+                            // to={`${quizRouter.takeQuiz}/${quizDetail?.slug}`}
+                            className="bg-gradient-to-r from-primary to-green-700 text-white rounded hover:opacity-60 duration-300 w-full py-1"
+                        >
+                            <FontAwesomeIcon icon={faPlayCircle} className="mr-2" />
+                            Bắt đầu ôn thi
+                        </button>
                     </div>
                 </div>
-                <div className="col-span-1">Hello</div>
-                <div className="col-start-2 col-end-2">
-                    <button
-                        onClick={handleOpenModalStartQuiz}
-                        // to={`${quizRouter.takeQuiz}/${quizDetail?.slug}`}
-                        className="bg-gradient-to-r from-primary to-green-700 text-white rounded hover:opacity-60 duration-300 w-full py-1"
-                    >
-                        <FontAwesomeIcon icon={faPlayCircle} className="mr-2" />
-                        Bắt đầu ôn thi
-                    </button>
-                </div>
             </div>
-        </div>
-         <Modal />
+            <Modal />
         </>
     );
 };
