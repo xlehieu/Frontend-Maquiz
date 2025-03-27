@@ -16,9 +16,9 @@ import Button from '~/components/Button';
 import CreateQuizPart from '~/components/CreateQuizPartCmp';
 import BlurBackground from '~/components/BlurBackground';
 //
-import { Input, message } from 'antd';
+import { Input, message, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import { imageQuizThumbDefault } from '~/constants';
+import { educationLevels, imageQuizThumbDefault } from '~/constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard, faQuestionCircle, faReply } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
@@ -44,13 +44,17 @@ const CreateQuizGeneralInfo = () => {
     const [quizDesc, setQuizDesc] = useState('');
     const [quizSchool, setQuizSchool] = useState();
     const [quizSubject, setQuizSubject] = useState('');
-
+    const [quizEducationLevel, setQuizEducationLevel] = useState([]);
+    const [quizSchoolYear, setQuizSchoolYear] = useState(2025);
+    const [quizTopic, setQuizTopic] = useState('');
     // ref vào các span để hiển  thị validate
     const refQuizName = useRef();
     const refQuizDesc = useRef();
     const refQuizSchool = useRef();
     const refQuizSubject = useRef();
-
+    const refQuizEducationLevel = useRef();
+    const refQuizSchoolYear = useRef();
+    const refQuizTopic = useRef();
     const handleChangeImage = useCallback((url) => {
         setImageUrl(url);
     }, []); // ở đây phải sử dụng useCallback vì dùng hàm setImageUrl này truyền vào cmp Upload, bên trong cmp Upload phải sử dụng memo
@@ -82,6 +86,15 @@ const CreateQuizGeneralInfo = () => {
             if (!quizSubject) {
                 refQuizSubject.current.textContent = 'Đây là trường bắt buộc';
             }
+            if (quizEducationLevel.length <= 0) {
+                refQuizEducationLevel.current.textContent = 'Đây là trường bắt buộc';
+            }
+            if (!quizSchoolYear) {
+                refQuizSchoolYear.current.textContent = 'Đây là trường bắt buộc';
+            }
+            if (!quizTopic) {
+                refQuizTopic.current.textContent = 'Đây là trường bắt buộc';
+            }
             return;
         }
         createQuizGeneralInfoMutation.mutate({
@@ -90,6 +103,9 @@ const CreateQuizGeneralInfo = () => {
             school: quizSchool,
             subject: quizSubject,
             thumb: imageUrl,
+            schoolYear: quizSchoolYear,
+            topic: quizTopic,
+            educationLevel: quizEducationLevel,
         });
     };
     //END
@@ -107,7 +123,7 @@ const CreateQuizGeneralInfo = () => {
                 </div>
             </div>
             <div className="flex flex-1 flex-col gap-4 px-6 py-4 rounded-lg border-2 shadow-sm bg-white">
-                <div className="flex flex-col">
+                <div className="flex flex-col focus-within:text-primary">
                     <div className="mb-2">
                         <label htmlFor="quizName" className="font-semibold">
                             Tên đề thi
@@ -126,7 +142,65 @@ const CreateQuizGeneralInfo = () => {
                     ></Input>
                     <span className="text-sm text-red-600" ref={refQuizName}></span>
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col focus-within:text-primary">
+                    <div className="mb-2">
+                        <label htmlFor="quizSubject" className="font-semibold">
+                            Trình độ
+                        </label>
+                    </div>
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        placeholder="Please select"
+                        value={quizEducationLevel}
+                        onChange={(e) => setQuizEducationLevel(e)}
+                    >
+                        {educationLevels?.map((level, index) => (
+                            <Select.Option value={level} key={index}>
+                                {level}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                    <span className="text-sm text-red-600" ref={refQuizEducationLevel}></span>
+                </div>
+                <div className="columns-2 gap-4">
+                    <div className="flex flex-col focus-within:text-primary">
+                        <div className="flex flex-col focus-within:text-primary">
+                            <div className="mb-2">
+                                <label htmlFor="quizSchool" className="font-semibold">
+                                    Năm học
+                                </label>
+                            </div>
+                            <Input
+                                onChange={(e) => setQuizSchoolYear(e.target.value)}
+                                value={quizSchoolYear}
+                                type="number"
+                                className="px-3 py-1 shadow-sm rounded-md border-2 outline-primary caret-primary"
+                                placeholder="Năm học"
+                            ></Input>
+                            <span className="text-sm text-red-600" ref={refQuizSchoolYear}></span>
+                        </div>
+                    </div>
+                    <div className="flex flex-col focus-within:text-primary">
+                        <div className="mb-2">
+                            <label htmlFor="quizName" className="font-semibold">
+                                Chủ đề bài thi
+                            </label>
+                        </div>
+                        <Input
+                            value={quizTopic}
+                            onChange={(e) => {
+                                setQuizTopic(e.target.value);
+                            }}
+                            autoComplete="off"
+                            placeholder="Chủ đề bài thi"
+                            type="text"
+                            className="px-3 py-1 shadow-sm rounded-md border-2 outline-primary caret-primary"
+                        ></Input>
+                        <span className="text-sm text-red-600" ref={refQuizTopic}></span>
+                    </div>
+                </div>
+                <div className="flex flex-col focus-within:text-primary">
                     <div className="mb-2">
                         <label htmlFor="quizDescription" className="font-semibold">
                             Mô tả đề thi
@@ -145,8 +219,8 @@ const CreateQuizGeneralInfo = () => {
                     ></TextArea>
                     <span className="text-sm text-red-600" ref={refQuizDesc}></span>
                 </div>
-                <div className="columns-2 gap-4">
-                    <div className="flex flex-col">
+                <div className="columns-2 gap-4 ">
+                    <div className="flex flex-col focus-within:text-primary">
                         <div className="mb-2">
                             <label htmlFor="quizSchool" className="font-semibold">
                                 Trường học
@@ -158,24 +232,9 @@ const CreateQuizGeneralInfo = () => {
                             className="px-3 py-1 shadow-sm rounded-md border-2 outline-primary caret-primary"
                             placeholder={'Tên trường học'}
                         ></Input>
-                        {/* <Select
-                            onSearch={(e) => {
-                                setQuizSchool(e);
-                            }}
-                            onClear={(e) => console.log(e)}
-                            onChange={(e) => setQuizSchool(e)}
-                            value={quizSchool}
-                            className="w-full caret-primary"
-                            showSearch
-                            placeholder={'Tên trường học'}
-                        >
-                            {UNIVERSITIES.map((university, index) => (
-                                <Option key={index} value={university}></Option>
-                            ))}
-                        </Select> */}
                         <span className="text-sm text-red-600" ref={refQuizSchool}></span>
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col focus-within:text-primary">
                         <div className="mb-2">
                             <label htmlFor="quizSubject" className="font-semibold">
                                 Tên môn học
