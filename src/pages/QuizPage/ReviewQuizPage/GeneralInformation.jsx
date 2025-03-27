@@ -80,24 +80,34 @@ const GeneralInformation = ({ quizDetail }) => {
                         <div className="flex flex-col gap-3">
                             {quizDetail.topic && (
                                 <div className="mt-2">
-                                    <p className="font-medium h-20 overflow-scroll">Chủ đề: {quizDetail.topic}</p>
+                                    <p className="font-medium max-h-12 overflow-scroll">Chủ đề: {quizDetail.topic}</p>
                                 </div>
                             )}
                             {quizDetail.schoolYear && (
                                 <div className="mt-2">
-                                    <p className="font-medium h-20 overflow-scroll">Năm học: {quizDetail.schoolYear}</p>
+                                    <p className="font-medium max-h-12 overflow-scroll">
+                                        Năm học: {quizDetail.schoolYear}
+                                    </p>
                                 </div>
                             )}
-                            {quizDetail.educationLevel && (
+                            {quizDetail.educationLevel && quizDetail?.educationLevel?.length > 0 && (
                                 <div className="mt-2">
-                                    <p className="font-medium h-20 overflow-scroll">
-                                        Trình độ: {quizDetail.educationLevel}
+                                    <p className="font-medium overflow-scroll">
+                                        Trình độ:{' '}
+                                        {quizDetail?.educationLevel?.map((level, index) => (
+                                            <span>
+                                                {level}
+                                                {index < quizDetail?.educationLevel?.length - 1 && ', '}
+                                            </span>
+                                        ))}
                                     </p>
                                 </div>
                             )}
                             {quizDetail.description && (
                                 <div className="mt-2">
-                                    <p className="font-medium h-20 overflow-scroll">Mô tả: {quizDetail.description}</p>
+                                    <p className="font-medium max-h-16 overflow-scroll">
+                                        Mô tả: {quizDetail.description}
+                                    </p>
                                 </div>
                             )}
                         </div>
