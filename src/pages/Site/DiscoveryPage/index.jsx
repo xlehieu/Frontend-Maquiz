@@ -105,7 +105,7 @@ const MainResult = () => {
                 align="end"
                 onChange={(e) => handleChangePage(e)}
                 defaultCurrent={1}
-                defaultPageSize={1}
+                defaultPageSize={PAGE_SIZE}
                 total={quizzes?.total || PAGE_SIZE}
             />
         </section>
