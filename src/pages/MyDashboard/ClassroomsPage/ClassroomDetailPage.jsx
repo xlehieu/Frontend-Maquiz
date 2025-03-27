@@ -23,7 +23,7 @@ const ClassroomContext = createContext();
 const ClassroomProvider = ({ children }) => {
     const { classCode } = useParams();
     const queryClassDetail = useQuery({
-        queryKey: ['queryClassDetail', classCode],
+        queryKey: ['queryClassDetail'],
         queryFn: () => ClassroomService.getClassroomDetail({ classCode }),
     });
     useEffect(() => {
@@ -79,9 +79,8 @@ const NewsFeedComponent = () => {
     const [notificationText, setNotificationText] = useState('');
     const user = useSelector((state) => state.user);
     const quizzesQuery = useQuery({
-        queryKey: ['queryQuizzes', user.email],
-        queryFn: () => QuizService.getQuizzes(),
-        enabled: !!user.email,
+        queryKey: ['queryQuizzes'],
+        queryFn: () => QuizService.getQuizzes({}),
     });
     const [selectedQuizzes, setSelectedQuizzes] = useState([]);
     const uploadPostMutation = useMutationHooks((data) => PostService.createPost(data));
@@ -226,7 +225,7 @@ const NewsFeedComponent = () => {
                     <>
                         <BlurBackground onClick={() => setIsOpenQuizzes(!isOpenQuizzes)} isActive={isOpenQuizzes} />
                         <ChooseQuizzes
-                            quizzes={quizzesQuery?.data}
+                            quizzes={quizzesQuery?.data?.quizzes}
                             selectedQuizzes={selectedQuizzes}
                             setSelectedQuizzes={setSelectedQuizzes}
                         />
