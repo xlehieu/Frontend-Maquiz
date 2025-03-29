@@ -133,6 +133,11 @@ const SignInPage = () => {
                     </Link>
                 </p>
             </div>
+            <div className="mt-3 mx-auto w-full md:max-w-96">
+                <Link to={siteRouter.forgotPassword} className="text-orange-600 font-semibold">
+                    Quên mật khẩu ?
+                </Link>
+            </div>
         </div>
     );
 };

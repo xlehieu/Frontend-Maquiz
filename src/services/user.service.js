@@ -107,3 +107,22 @@ export const getQuizzesAccessHistory = async (data) => {
         throw new Error(err.response.data.message);
     }
 };
+//yeu cau gui smtp de lay link thay doi mat khau
+export const forgotPassword = async (data) => {
+    try {
+        const { email } = data;
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/user/forgot-password`, { email });
+        if (res) return;
+    } catch (err) {
+        throw new Error(err.response.data.message);
+    }
+};
+export const resetPassword = async (data) => {
+    try {
+        const { newPassword, token } = data;
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/user/reset-password`, { token, newPassword });
+        if (res) return;
+    } catch (err) {
+        throw new Error(err.response.data.message);
+    }
+};

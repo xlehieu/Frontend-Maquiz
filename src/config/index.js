@@ -8,6 +8,8 @@ const siteRouter = {
     notFoundPage: '/*',
     discover: '/discovery',
     loginSuccess: '/login-success',
+    forgotPassword: '/forgot-password',
+    resetPassword: '/reset-password',
 };
 export const userDashboardRouter = {
     myDashboard: '/my-dashboard',

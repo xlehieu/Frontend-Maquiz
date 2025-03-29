@@ -15,15 +15,20 @@ const SignUpPage = lazy(() => import('~/pages/Site/SignUpPage'));
 const ProfileUser = lazy(() => import('~/pages/Site/ProfileUser'));
 const CreateQuizPage = lazy(() => import('~/pages/QuizPage/CreateQuizPage'));
 const DiscoverPage = lazy(() => import('~/pages/Site/DiscoveryPage'));
+const ForgotPasswordPage = lazy(() => import('~/pages/Site/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('~/pages/Site/ResetPasswordPage'));
 export const publicRoutes = [
     { path: siteRouter.home, component: HomePage, layout: DefaultLayout },
     { path: siteRouter.contact, component: ContactPage, layout: DefaultLayout },
     { path: siteRouter.signIn, component: SignInPage, layout: SignInUpLayout, title: 'Đăng nhập' },
     { path: siteRouter.signUp, component: SignUpPage, layout: SignInUpLayout, title: 'Đăng ký' },
+    { path: siteRouter.forgotPassword, component: ForgotPasswordPage, layout: SignInUpLayout, title: 'Quên mật khẩu' },
+    { path: siteRouter.resetPassword, component: ResetPasswordPage, layout: SignInUpLayout, title: 'Đặt lại mật khẩu' },
     { path: siteRouter.profile, component: ProfileUser, layout: DefaultLayout },
     { path: siteRouter.createQuiz, component: CreateQuizPage, layout: DefaultLayout, title: 'Tạo đề thi' },
     { path: siteRouter.discover, component: DiscoverPage, layout: SubLayout, title: 'Khám phá' },
     { path: siteRouter.loginSuccess, component: LoginSuccess },
+
     // { path: router.reviewQuiz, component: QuizPages.ReviewQuizPage, layout: DefaultLayout },
     //Admin
     //Dashboard
