@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as UserService from '~/services/user.service';
 import useMutationHooks from '~/hooks/useMutationHooks';
@@ -8,15 +8,18 @@ export default function ForgotPasswordPage() {
     const [message, setMessage] = useState('');
     const sendLinkMutation = useMutationHooks((data) => UserService.forgotPassword(data));
     const handleSubmit = async (e) => {
-        sendLinkMutation.mutate({ email });
         e.preventDefault();
-        try {
-            setMessage('✅ Link đặt lại mật khẩu đã được gửi về email.');
-        } catch {
-            setMessage('❌ Không tìm thấy email.');
-        }
+        sendLinkMutation.mutate({ email });
     };
-
+    useEffect(() => {
+        if (sendLinkMutation.isSuccess) {
+            setMessage('✅ Link đặt lại mật khẩu đã được gửi về email.');
+            sendLinkMutation.reset();
+        } else if (sendLinkMutation.isError) {
+            setMessage('❌ Không tìm thấy email.');
+            sendLinkMutation.reset();
+        }
+    }, [sendLinkMutation]);
     return (
         <div className="flex flex-col items-center justify-center">
             <h1 className="text-2xl font-bold mb-4">Quên mật khẩu</h1>
@@ -29,8 +32,14 @@ export default function ForgotPasswordPage() {
                     className="border p-2 rounded"
                     required
                 />
-                <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-                    {sendLinkMutation.isPending && <LoadingOutlined />}Gửi link
+                <button
+                    type="submit"
+                    className={`bg-blue-500 text-white p-2 rounded text-center flex justify-center items-center ${
+                        (sendLinkMutation.isPending || email.length <= 0) && 'opacity-50'
+                    }`}
+                    disabled={sendLinkMutation.isPending || email.length <= 0}
+                >
+                    {sendLinkMutation.isPending && <LoadingOutlined className="mr-2" />}Gửi link
                 </button>
             </form>
             {message && <p className="mt-4">{message}</p>}

@@ -112,7 +112,7 @@ export const forgotPassword = async (data) => {
     try {
         const { email } = data;
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/user/forgot-password`, { email });
-        if (res) return;
+        if (res) return res;
     } catch (err) {
         throw new Error(err.response.data.message);
     }
