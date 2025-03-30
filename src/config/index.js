@@ -1,6 +1,7 @@
 const siteRouter = {
     home: '/',
     contact: '/lien-he',
+    news: '/tin-tuc',
     signIn: '/dang-nhap',
     signUp: '/dang-ky',
     profile: '/thong-tin',

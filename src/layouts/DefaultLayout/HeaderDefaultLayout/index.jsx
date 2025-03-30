@@ -36,7 +36,7 @@ const HeaderComponent = () => {
                 <nav className="hidden md:flex items-center justify-end">
                     <Link
                         className="w-24 flex items-center justify-center text-primary text-lg  duration-300 hover:text-secondary"
-                        to={'/'}
+                        to={siteRouter.news}
                     >
                         Tin tức
                     </Link>
