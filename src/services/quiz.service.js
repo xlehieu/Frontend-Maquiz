@@ -1,6 +1,6 @@
 import { message } from 'antd';
-import axiosCredentials from './axios.credential';
-import axiosApplicationJson from './axios.default';
+import axiosCredentials from '../config/axios.credential';
+import axiosApplicationJson from '../config/axios.default';
 
 export const getQuizzes = async (data) => {
     try {

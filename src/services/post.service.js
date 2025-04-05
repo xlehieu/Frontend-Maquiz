@@ -1,4 +1,4 @@
-import axiosCredentials from './axios.credential';
+import axiosCredentials from '../config/axios.credential';
 export const createPost = async (data) => {
     try {
         const { content } = data;

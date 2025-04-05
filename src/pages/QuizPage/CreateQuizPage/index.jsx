@@ -22,6 +22,7 @@ import { educationLevels, imageQuizThumbDefault } from '~/constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard, faQuestionCircle, faReply } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import configEditor from '~/config/editor';
 
 const TabIndexContext = createContext();
 const QuizIdContext = createContext();
@@ -447,9 +448,10 @@ const CreateQuizQuestion = () => {
                         </div>
                         <JoditEditor
                             config={{
+                                ...configEditor,
                                 placeholder: 'Nhập câu hỏi',
                                 askBeforePasteHTML: false,
-                                defaultActionOnPaste: 'insert_only_text',
+                                defaultActionOnPaste: 'insert_as_html',
                             }}
                             value={questionContent}
                             onBlur={(newContent) => setQuestionContent(newContent)} // preferred to use only this option to update the content for performance reasons
@@ -496,9 +498,10 @@ const CreateQuizQuestion = () => {
                                 </div>
                                 <JoditEditor
                                     config={{
+                                        ...configEditor,
                                         placeholder: `Nhập câu trả lời ${index + 1}`,
                                         askBeforePasteHTML: false,
-                                        defaultActionOnPaste: 'insert_only_text',
+                                        defaultActionOnPaste: 'insert_as_html',
                                     }}
                                     className="mt-2"
                                     value={answer.content}
@@ -551,14 +554,14 @@ const CreateQuizPageMain = () => {
 
     return (
         <div className="bg-opacity-40 py-10">
-            <div className="w-full md:w-11/12 m-auto flex justify-between">
+            <div className="w-full m-auto flex justify-between">
                 <h4 className="font-semibold">Tạo đề thi mới</h4>
                 <button onClick={() => navigate(-1)} className="rounded-lg bg-red-500 px-2 py-1 text-white">
                     <FontAwesomeIcon icon={faReply} className="mr-1" />
                     Quay lại
                 </button>
             </div>
-            <div className="w-full md:w-11/12 m-auto mt-3 px-4 rounded-lg border-2 shadow-sm flex gap-4 bg-white py-3">
+            <div className="w-full m-auto mt-3 px-4 rounded-lg border-2 shadow-sm flex gap-4 bg-white py-3">
                 {tabs.map((tab, index) => (
                     <button
                         key={index}
@@ -573,7 +576,7 @@ const CreateQuizPageMain = () => {
                     </button>
                 ))}
             </div>
-            <div className="w-full md:w-11/12 m-auto mt-3 flex justify-center ">{tabContent[currentTabIndex]}</div>
+            <div className="w-full m-auto mt-3 flex justify-center ">{tabContent[currentTabIndex]}</div>
         </div>
     );
 };

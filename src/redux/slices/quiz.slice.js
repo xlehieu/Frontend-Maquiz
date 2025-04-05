@@ -10,7 +10,7 @@ export const quizSlice = createSlice({
             state.quiz = action.payload;
         },
         deleteOneQuiz: (state, action) => {
-            state.quiz = state.quiz.filter((q) => q.id !== action.payload.id);
+            state.quiz.filter((q) => q._id !== action.payload.id);
         },
     },
 });

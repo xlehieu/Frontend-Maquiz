@@ -31,7 +31,7 @@
 body {
     overflow-y: scroll;
     overflow-x: hidden;
-    font-family: 'Signika Negative';
+    font-family: 'Open Sans', sans-serif;
 }
 html *::-webkit-scrollbar {
     width: 7px;

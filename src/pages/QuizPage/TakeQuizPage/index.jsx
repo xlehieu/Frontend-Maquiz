@@ -378,6 +378,20 @@ const TakeQuizInfo = () => {
 };
 // region Choose answers
 // Phần  giữa (chọn đáp án)
+const sanitizeHTML = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const elements = doc.body.querySelectorAll('p,span');
+
+    elements.forEach((el) => {
+        if (el.style && el.style.backgroundColor) {
+            el.style.backgroundColor = ''; // Loại bỏ background-color
+            el.style.color = ''; // Loại bỏ color
+        }
+    });
+
+    return doc.body.innerHTML;
+};
 const ChooseAnswer = () => {
     const {
         quizDetail,
@@ -574,20 +588,20 @@ const ChooseAnswer = () => {
                                                                           answerChoices[currentPartIndex][
                                                                               currentQuestionIndex
                                                                           ]?.chooseIndex === index &&
-                                                                          '!bg-red-600 text-white'
+                                                                          '!bg-red-600 !text-white'
                                                                       } px-2`
                                                                     : `${
                                                                           handleGetIsCorrectAnswer(index) === true &&
-                                                                          '!bg-green-700 text-white'
+                                                                          '!bg-green-700 !text-white'
                                                                       }
                                                                       ${
                                                                           handleGetIsCorrectAnswer(index) === false &&
-                                                                          '!bg-red-600 text-white'
+                                                                          '!bg-red-600 !text-white'
                                                                       }
                                                                       `
                                                             }
                                                         >
-                                                            {HTMLReactParser(answer.content)}
+                                                            {HTMLReactParser(sanitizeHTML(answer.content))}
                                                         </div>
                                                     </label>
                                                 ))}
@@ -615,7 +629,7 @@ const TableOfQuestion = () => {
         currentQuestionType,
     } = useContext(TakeQuizContext);
     return (
-        <div className="px-2 py-2 bg-white rounded shadow max-w80 min-w-72">
+        <div className="px-2 py-2 bg-white rounded shadow lg:max-w-80 lg:min-w-72 w-full">
             <div className="mb-2 flex flex-row justify-between">
                 <p>Mục lục câu hỏi</p>
                 <p className="text-sm">{questionTypeContent[currentQuestionType]}</p>

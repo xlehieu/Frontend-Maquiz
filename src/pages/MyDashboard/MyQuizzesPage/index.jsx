@@ -22,8 +22,8 @@ const QuizzesProvider = ({ children }) => {
     const handleGetQuizzes = async () => {
         if (quizzesSelector.quiz.length <= 0) {
             const quizSer = await QuizService.getQuizzes({});
-            setQuizzesData(quizSer);
-            quizDispatch(setQuiz(quizSer));
+            setQuizzesData(quizSer.quizzes);
+            quizDispatch(setQuiz(quizSer.quizzes));
             return quizSer;
         } else {
             if (!(quizzesSelector.quiz === quizzesData)) {
@@ -87,13 +87,13 @@ const MyQuizPageMain = () => {
         } else if (deleteQuizMutation.isError) {
             message.error('Xóa bài trắc nghiệm thất bại, vui lòng thử lại');
         }
-    }, [deleteQuizMutation]);
+    }, [deleteQuizMutation.isError, deleteQuizMutation.isSuccess]);
     useEffect(() => {
         if (getQuizzesMutation.isSuccess) {
             setQuizzesData(getQuizzesMutation.data);
         } else if (getQuizzesMutation) {
         }
-    }, [getQuizzesMutation]);
+    }, [getQuizzesMutation.isSuccess]);
     useLayoutEffect(() => {
         window.scrollTo({
             top: 0,
@@ -113,7 +113,7 @@ const MyQuizPageMain = () => {
                         <>
                             <div className="w-full border-b-2 px-9 py-1 flex justify-between">
                                 <p className="font-semibold text-xl">
-                                    <span className="text-primary mr-2">{quizzesData?.total || 0}</span>
+                                    <span className="text-primary mr-2">{quizzesData?.length || 0}</span>
                                     <span className="text-slate-600">Đề thi</span>
                                 </p>
                                 <button
@@ -125,8 +125,8 @@ const MyQuizPageMain = () => {
                                 </button>
                             </div>
                             <div className="grid w-full h-full grid-cols-2 gap-4 px-0 pb-4 sm:grid-cols-3 md:grid-cols-4  2xl:grid-cols-5">
-                                {quizzesData?.quizzes?.length > 0
-                                    ? quizzesData?.quizzes?.map((quiz, index) => (
+                                {quizzesData.length > 0
+                                    ? quizzesData.map((quiz, index) => (
                                           <QuizCard
                                               key={index}
                                               title={quiz.name}
@@ -149,7 +149,7 @@ const MyQuizPageMain = () => {
                     onChange={(e) => handleGetQuizzes(e)}
                     defaultCurrent={1}
                     defaultPageSize={PAGE_SIZE}
-                    total={quizzesData?.total || PAGE_SIZE}
+                    total={quizzesData?.length || 0}
                 />
             </section>
             <Modal

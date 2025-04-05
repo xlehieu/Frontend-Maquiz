@@ -21,11 +21,36 @@ module.exports = {
         extend: {
             colors: {
                 primary: '#0d99a6',
-                link: ' #00bfa5',
+                'primary-bold': '#0a6770',
+                link: '#00bfa5',
                 secondary: '#2b6bb5',
                 background: '#fcfcfc',
             },
+            keyframes: {
+                shrink: {
+                    '0%, 100%': { width: '100%' },
+                    '50%': { width: '0%' },
+                },
+                'animate-gradient': {
+                    '0%': { 'background-position': '0%' },
+                    '50%': { 'background-position': '100%' },
+                    '100%': { 'background-position': '0%' },
+                },
+            },
+            animation: {
+                shrink: 'shrink 3s ease-in-out infinite',
+                'animate-gradient': 'animate-gradient 3s ease-in-out infinite',
+            },
         },
     },
-    plugins: [require('tailwind-scrollbar')],
+    plugins: [
+        require('tailwind-scrollbar'),
+        function ({ addUtilities }) {
+            addUtilities({
+                '.break-inside-avoid': {
+                    breakInside: 'avoid',
+                },
+            });
+        },
+    ],
 };

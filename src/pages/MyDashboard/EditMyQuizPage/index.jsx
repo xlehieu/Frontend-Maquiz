@@ -23,26 +23,27 @@ import CreateQuizPart from '~/components/CreateQuizPartCmp';
 import BlurBackground from '~/components/BlurBackground';
 import { useQuery } from '@tanstack/react-query';
 import LazyImage from '~/components/LazyImage';
+import configEditor from '~/config/editor';
 
 const QuizDetailContext = createContext();
 const SetQuizDetailContext = createContext();
 const QuizDetailProvider = ({ children }) => {
     const { id } = useParams(); // id từ param url
     const [quizDetail, setQuizDetail] = useState({});
-    const handleGetQuizDetail = async () => {
-        const quiz = await QuizService.getQuizDetail(id);
-        if (quiz) {
-            setQuizDetail(quiz);
-            return quiz;
-        }
-        return {};
-    };
-    const getQuizQuery = useQuery({ queryKey: [''], queryFn: handleGetQuizDetail });
+    const getQuizQuery = useQuery({
+        queryKey: ['getQuizQuery', id],
+        queryFn: () => QuizService.getQuizDetail(id),
+        refetchOnMount: false, // Không refetch khi component được mount lại
+        staleTime: Infinity,
+    });
     useEffect(() => {
         if (getQuizQuery.isError) {
             message.error('Lỗi!, không tìm thấy đề thi');
         }
-    }, [getQuizQuery.isError]);
+        if (getQuizQuery.data) {
+            setQuizDetail(getQuizQuery.data);
+        }
+    }, [getQuizQuery.isError, getQuizQuery.data]);
     return (
         <QuizDetailContext.Provider value={quizDetail}>
             <SetQuizDetailContext.Provider value={setQuizDetail}>{children}</SetQuizDetailContext.Provider>
@@ -280,7 +281,6 @@ const EditQuestionQuizTab = () => {
     const [isActiveQuizPartNameDialog, setIsActiveQuizPartNameDialog] = useState(false);
     const [currentPartIndex, setCurrentPartIndex] = useState(0);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
     //Xử lý click chuyển phần thi
     const handleChangePartIndex = (index) => {
         setCurrentPartIndex(index);
@@ -345,6 +345,7 @@ const EditQuestionQuizTab = () => {
     };
     //Xử lý thêm câu h��i
     const handleAddQuestion = () => {
+        setCurrentQuestionIndex(quizDetail?.quiz[currentPartIndex]?.questions?.length);
         setQuizDetail((preQuizDetail) => {
             preQuizDetail = { ...preQuizDetail };
             if (preQuizDetail.quiz[currentPartIndex]) {
@@ -375,7 +376,6 @@ const EditQuestionQuizTab = () => {
             }
             return preQuizDetail;
         });
-        setCurrentQuestionIndex(quizDetail?.quiz[currentPartIndex]?.questions?.length);
     };
     const handleRemoveQuizPart = (index) => {
         if (quizDetail?.quiz[index]) {
@@ -480,8 +480,10 @@ const EditQuestionQuizTab = () => {
                 top: 140,
                 behavior: 'smooth',
             });
+            updateQuizQuestionMutation.reset();
         } else if (updateQuizQuestionMutation.isError) {
             message.error(updateQuizQuestionMutation.error.message);
+            updateQuizQuestionMutation.reset();
         }
     }, [updateQuizQuestionMutation.isError, updateQuizQuestionMutation.isSuccess]);
     ///TAB
@@ -607,9 +609,10 @@ const EditQuestionQuizTab = () => {
                             </div>
                             <JoditEditor
                                 config={{
+                                    ...configEditor,
                                     placeholder: 'Nhập câu hỏi',
                                     askBeforePasteHTML: false,
-                                    defaultActionOnPaste: 'insert_only_text',
+                                    defaultActionOnPaste: 'insert_as_html',
                                 }}
                                 value={
                                     quizDetail?.quiz &&
@@ -628,7 +631,7 @@ const EditQuestionQuizTab = () => {
                                     (answer, index) => (
                                         <div key={index} className="flex flex-col mt-4">
                                             <div className="flex justify-between content-center">
-                                                <div className="flex">
+                                                <div className="flex text-xl pb-2">
                                                     {quizDetail.quiz &&
                                                     quizDetail.quiz[currentPartIndex].questions[currentQuestionIndex]
                                                         .questionType == 1 ? (
@@ -637,7 +640,7 @@ const EditQuestionQuizTab = () => {
                                                             checked={answer.isCorrect}
                                                             onChange={(e) => handleChangeSingleChoice(index)}
                                                             type="radio"
-                                                            className="mr-2"
+                                                            className="mr-2 hover:cursor-pointer"
                                                             id={`${'answer' + index}`}
                                                         />
                                                     ) : (
@@ -646,18 +649,18 @@ const EditQuestionQuizTab = () => {
                                                             checked={answer.isCorrect}
                                                             onChange={(e) => handleChangeMultipleChoice(index)}
                                                             type="checkbox"
-                                                            className="mr-2"
+                                                            className="mr-2 hover:cursor-pointer"
                                                             id={`${'answer' + index}`}
                                                         />
                                                     )}
                                                     <label
                                                         htmlFor={`${'answer' + index}`}
-                                                        className="flex-wrap content-center"
+                                                        className="flex-wrap content-center hover:cursor-pointer"
                                                     >
                                                         Đáp án {`${index + 1}`}
                                                     </label>
                                                 </div>
-                                                <button onClick={() => handleRemoveAnswers(index)}>
+                                                <button className="text-xl" onClick={() => handleRemoveAnswers(index)}>
                                                     <p className="text-red-600">
                                                         <FontAwesomeIcon className="mr-1" icon={faTrash} />
                                                         Xóa đáp án
@@ -666,9 +669,10 @@ const EditQuestionQuizTab = () => {
                                             </div>
                                             <JoditEditor
                                                 config={{
+                                                    ...configEditor,
                                                     placeholder: 'Nhập câu hỏi',
                                                     askBeforePasteHTML: false,
-                                                    defaultActionOnPaste: 'insert_only_text',
+                                                    defaultActionOnPaste: 'insert_as_html',
                                                 }}
                                                 className="mt-2"
                                                 value={answer.content}

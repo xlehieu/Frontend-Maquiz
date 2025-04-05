@@ -1,6 +1,6 @@
 import axios from 'axios';
-import axiosCredentials from './axios.credential';
-import axiosNoInterceptor from './axios.nointerceptor';
+import axiosCredentials from '../config/axios.credential';
+import axiosNoInterceptor from '../config/axios.nointerceptor';
 
 export const login = async (data) => {
     try {

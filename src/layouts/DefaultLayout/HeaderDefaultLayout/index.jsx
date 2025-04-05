@@ -8,7 +8,7 @@ import siteRouter, { userDashboardRouter } from '~/config';
 import Tippy from '@tippyjs/react/headless';
 import MaquizLogo from '../../../components/MaquizLogo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faClose, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faClose } from '@fortawesome/free-solid-svg-icons';
 import BlurBackground from '../../../components/BlurBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 import LazyImage from '~/components/LazyImage';

@@ -7,13 +7,13 @@ function DefaultLayout({ children, title }) {
         document.title = title ?? 'Maquiz';
     });
     return (
-        <div className="relative">
+        <main className="relative">
             <HeaderComponent></HeaderComponent>
-            <div className="bg-background ">
-                <div className="container mx-auto px-2 md:px-5">{children}</div>
+            <div className="bg-background pb-10">
+                <div className="container mx-auto">{children}</div>
             </div>
             <Footer />
-        </div>
+        </main>
     );
 }
 

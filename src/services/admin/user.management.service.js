@@ -1,4 +1,4 @@
-import axiosCredentials from '../axios.credential';
+import axiosCredentials from '../../config/axios.credential';
 
 export const getUserList = async (data) => {
     try {
