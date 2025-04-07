@@ -23,7 +23,7 @@ import useMutationHooks from '~/hooks/useMutationHooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { favoriteQuiz } from '~/redux/slices/user.slice';
 const QuizCard = ({
-    title,
+    name,
     slug,
     time,
     questionCount = 0,
@@ -36,29 +36,29 @@ const QuizCard = ({
 }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    // const userInfo = useSelector(state=>state.user)
-    // const favoriteMutation = useMutationHooks((data) => UserService.favoriteQuiz(data));
-    //     const handleFavoriteQuiz = (id, slug) => {
-    //         if (!id) return;
-    //         favoriteMutation.mutate({ id });
-    //         dispatch(favoriteQuiz({ slug }));
-    //     };
-    //     useEffect(() => {
-    //         if (favoriteMutation.isSuccess) {
-    //             favoriteMutation.reset();
-    //         }
-    //     }, [favoriteMutation.isSuccess]);
-    //     isFavorite=userInfo.favoriteQuiz.some((q) => q.slug === slug)
+    const userInfo = useSelector((state) => state.user);
+    const favoriteMutation = useMutationHooks((data) => UserService.favoriteQuiz(data));
+    const handleFavoriteQuiz = (id, slug) => {
+        if (!id) return;
+        favoriteMutation.mutate({ id });
+        dispatch(favoriteQuiz({ slug }));
+    };
+    useEffect(() => {
+        if (favoriteMutation.isSuccess) {
+            favoriteMutation.reset();
+        }
+    }, [favoriteMutation.isSuccess]);
+    isFavorite = userInfo.favoriteQuiz.some((q) => q.slug === slug);
     return (
         <div className="shrink-0 max-w-80 transition-all duration-300 shadow-lg rounded hover:shadow-2xl">
             <div
                 onClick={() => navigate(`${quizRouter.reviewQuiz}/${slug}`)}
                 className="w-full h-52 flex justify-center content-center hover:cursor-pointer"
             >
-                <LazyImage src={imageSrc} alt={title} placeholder={<ScaleLoader color={colors.primary} />} />
+                <LazyImage src={imageSrc} alt={name} placeholder={<ScaleLoader color={colors.primary} />} />
             </div>
             <div className="px-2 py-3">
-                <p className="font-bold text-base line-clamp-2">{title}</p>
+                <p className="font-bold text-base line-clamp-2">{name}</p>
                 {time && (
                     <div className="flex items-center gap-1">
                         <FontAwesomeIcon className="text-orange-900" icon={faCircleQuestion} />
@@ -115,12 +115,12 @@ const QuizCard = ({
                     <FontAwesomeIcon icon={faPlayCircle} className="pr-1" />
                     Vào ôn thi
                 </Link>
-                {/* <button onClick={() => handleFavoriteQuiz(id, slug)}>
+                <button onClick={() => handleFavoriteQuiz(id, slug)}>
                     <FontAwesomeIcon
                         className="text-red-500 text-2xl"
                         icon={isFavorite ? faHeartSolid : faHeartRegular}
                     />
-                </button> */}
+                </button>
             </div>
         </div>
     );

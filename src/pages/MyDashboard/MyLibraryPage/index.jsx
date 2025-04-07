@@ -18,6 +18,7 @@ const MyLibrary = () => {
                         {userQuery?.data?.favoriteQuiz?.map((quiz, index) => (
                             <QuizCard
                                 key={index}
+                                name={quiz?.name}
                                 imageSrc={quiz?.thumb}
                                 slug={quiz?.slug}
                                 time={quiz?.createdAt}

@@ -87,7 +87,7 @@ const MainResult = () => {
                                 {quizzes?.quizzes?.map((quiz, index) => (
                                     <QuizCard
                                         key={index}
-                                        title={quiz.name}
+                                        name={quiz.name}
                                         accessCount={quiz.accessCount}
                                         examCount={quiz.examCount}
                                         imageSrc={quiz.thumb}

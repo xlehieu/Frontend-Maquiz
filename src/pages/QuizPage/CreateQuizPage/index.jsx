@@ -21,8 +21,10 @@ import TextArea from 'antd/es/input/TextArea';
 import { educationLevels, imageQuizThumbDefault } from '~/constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard, faQuestionCircle, faReply } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import configEditor from '~/config/editor';
+import { useSelector } from 'react-redux';
+import siteRouter from '~/config';
 
 const TabIndexContext = createContext();
 const QuizIdContext = createContext();
@@ -64,9 +66,9 @@ const CreateQuizGeneralInfo = () => {
     const createQuizGeneralInfoMutation = useMutationHooks((data) => QuizService.createQuiz(data));
 
     useEffect(() => {
-        if (createQuizGeneralInfoMutation.isSuccess && createQuizGeneralInfoMutation.data._id) {
+        if (createQuizGeneralInfoMutation.isSuccess && createQuizGeneralInfoMutation.data) {
             setCurrentTabIndex(1);
-            setQuizId(createQuizGeneralInfoMutation.data._id);
+            setQuizId(createQuizGeneralInfoMutation?.data?._id);
             message.success('Tạo bài trắc nghiệm thành công');
         } else if (createQuizGeneralInfoMutation.isError) {
             message.error('Tạo bài trắc nghiệm thất bại. Vui lòng thử lại');
@@ -581,6 +583,14 @@ const CreateQuizPageMain = () => {
     );
 };
 const CreateQuizPage = () => {
+    const navigate = useNavigate();
+    const user = useSelector((state) => state.user);
+    useEffect(() => {
+        if (!user.email) {
+            console.log(user.email);
+            navigate(siteRouter.signIn);
+        }
+    }, [user]);
     return (
         <QuizContextProvider>
             <CreateQuizPageMain />

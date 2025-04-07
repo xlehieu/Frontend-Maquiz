@@ -2,7 +2,7 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LoadingOutlined } from '@ant-design/icons';
 const Modal = ({
-    title = 'Hello',
+    title = 'TITLE',
     content = 'This is modal content',
     onLoading,
     onCancel,

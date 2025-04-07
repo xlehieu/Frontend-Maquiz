@@ -1,9 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import siteRouter from '~/config';
+import searchIcon from '~/asset/image/search.png';
+import knowledgeIcon from '~/asset/image/knowledge.png';
+import quizIcon from '~/asset/image/qna.png';
+import classroomIcon from '~/asset/image/classroom.png';
+import newsIcon from '~/asset/image/megaphone.png';
+
 export default function HomePage() {
     const user = useSelector((state) => state.user);
     const navigate = useNavigate();
@@ -12,23 +19,62 @@ export default function HomePage() {
     }, []);
     return (
         <>
-            <section className="flex flex-col justify-center items-center py-20">
-                <h2 className="text-3xl text-center font-extrabold bg-gradient-to-r from-primary to-pink-600 bg-clip-text text-transparent animate-animate-gradient bg-[length:400%] leading-tight mb-6 ">
-                    Hệ thống quản lý đề thi trắc nghiệm MAQUIZ
-                </h2>
-                <p className="text-lg text-gray-600 mb-10">
-                    Tạo, quản lý và thi trắc nghiệm dễ dàng chỉ với vài cú click chuột.
-                </p>
-                <div className="flex justify-center gap-4">
-                    <button
-                        onClick={() => navigate(siteRouter.discover)}
-                        className="bg-primary text-white animate-pulse px-6 py-3 rounded-xl text-lg hover:bg-primary-bold transition"
-                    >
-                        Bắt đầu ngay
-                    </button>
-                    <button className="bg-white border border-primary text-primary px-6 py-3 rounded-xl text-lg hover:bg-purple-50 transition">
-                        Tìm hiểu thêm
-                    </button>
+            <section className="flex flex-col md:flex-row justify-center items-center py-20">
+                <div className="w-full md:w-2/5 text-center">
+                    <h2 className="text-3xl font-extrabold bg-gradient-to-r from-[#FFAFBD] via-primary to-[#ffc3a0] bg-clip-text text-transparent animate-animate-gradient bg-[length:400%] leading-tight mb-6 ">
+                        Hệ thống quản lý đề thi trắc nghiệm MAQUIZ
+                    </h2>
+                    <p className="text-lg text-gray-600 mb-10">
+                        Tạo, quản lý và thi trắc nghiệm dễ dàng chỉ với vài cú click chuột.
+                    </p>
+                </div>
+                <div className="w-full md:w-3/5 flex flex-col gap-14 justify-center items-center">
+                    <div className="grid grid-cols-2 w-full">
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => navigate(siteRouter.discover)}
+                                className="bg-primary relative -rotate-3 text-white px-10 py-3 border border-black rounded-full text-lg hover:bg-primary-bold transition"
+                            >
+                                Khám phá ngay
+                                <img src={searchIcon} className="absolute left-2 -top-7 w-10 h-10" />
+                            </button>
+                        </div>
+                        <div className="flex justify-center">
+                            <button className="bg-primary relative rotate-3 text-white px-10 py-3  border border-black  rounded-full text-lg hover:bg-primary-bold transition">
+                                Tìm hiểu thêm
+                                <img src={knowledgeIcon} className="absolute -right-2 -bottom-4 w-10 h-10" />
+                            </button>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 w-full">
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => navigate(siteRouter.createQuiz)}
+                                className="bg-primary relative rotate-6 text-white px-10 py-3 border border-black rounded-full text-lg hover:bg-primary-bold transition"
+                            >
+                                Tạo đề thi
+                                <img src={quizIcon} className="absolute right-0 -top-7 w-10 h-10" />
+                            </button>
+                        </div>
+                        <div className="flex justify-center">
+                            <button className="bg-primary -rotate-1 text-white px-10 py-3  border border-black  rounded-full text-lg hover:bg-primary-bold transition">
+                                Lớp học
+                                <img src={classroomIcon} className="absolute -left-2 top-0 w-10 h-10" />
+                            </button>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 w-full">
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => navigate(siteRouter.news)}
+                                className="bg-primary rotate-1 relative text-white px-10 py-3 border border-black rounded-full text-lg hover:bg-primary-bold transition"
+                            >
+                                Xem tin
+                                <img src={newsIcon} className="absolute -bottom-3 left-0 w-10 h-10" />
+                            </button>
+                        </div>
+                        <div className="flex justify-center"></div>
+                    </div>
                 </div>
             </section>
 
