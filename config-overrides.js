@@ -1,4 +1,9 @@
-const { override, useBabelRc } = require('customize-cra');
+const { override, useBabelRc, addWebpackAlias } = require('customize-cra');
+const path = require('path');
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-module.exports = override(useBabelRc());
+module.exports = override(
+    useBabelRc(),
+    addWebpackAlias({
+        ['~']: path.resolve(__dirname, 'src'),
+    }),
+);
