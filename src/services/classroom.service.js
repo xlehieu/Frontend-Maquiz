@@ -42,7 +42,7 @@ export const getClassroomDetail = async (data) => {
                 params.append(key, String(value));
             }
         });
-        if (!classCode?.trim()) throw 'Lỗi';
+        if (!classCode?.trim()) throw new Error('Lỗi');
         const res = await axiosCredentials.get(`/classroom/detail?${params}`);
         if (res.status === 200 && res.data) {
             return res.data.data;
@@ -57,7 +57,7 @@ export const getClassroomDetail = async (data) => {
 export const enrollInClassroom = async (data) => {
     try {
         const { classCode } = data;
-        if (!classCode?.trim()) throw 'Vui lòng nhập mã lớp';
+        if (!classCode?.trim()) throw new Error('Vui lòng nhập mã lớp');
         const res = await axiosCredentials.patch('/classroom/enroll', JSON.stringify({ classCode }));
         if (res.status === 200 && res.data) {
             return res.data.data;
