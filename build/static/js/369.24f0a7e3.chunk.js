@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkclient=self.webpackChunkclient||[]).push([[369],{3369:(e,n,t)=>{t.r(n),t.d(n,{default:()=>l});t(9950);var c=t(4414);const l=e=>{let{children:n}=e;return(0,c.jsx)(c.Fragment,{children:n})}}}]);
