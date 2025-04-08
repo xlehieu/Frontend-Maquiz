@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Aos from 'aos';
 import 'aos/dist/aos.css';
-import siteRouter from '~/config';
+import siteRouter, { userDashboardRouter } from '~/config';
 import searchIcon from '~/asset/image/search.png';
 import knowledgeIcon from '~/asset/image/knowledge.png';
 import quizIcon from '~/asset/image/qna.png';
@@ -57,7 +57,10 @@ export default function HomePage() {
                             </button>
                         </div>
                         <div className="flex justify-center">
-                            <button className="bg-primary -rotate-1 text-white px-10 py-3  border border-black  rounded-full text-lg hover:bg-primary-bold transition">
+                            <button
+                                onClick={() => navigate(userDashboardRouter.classroom)}
+                                className="bg-primary -rotate-1 text-white px-10 py-3  border border-black  rounded-full text-lg hover:bg-primary-bold transition"
+                            >
                                 Lớp học
                                 <img src={classroomIcon} className="absolute -left-2 top-0 w-10 h-10" />
                             </button>

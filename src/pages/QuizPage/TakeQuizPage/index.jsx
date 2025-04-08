@@ -17,7 +17,8 @@ import siteRouter from '~/config';
 import { useQuery } from '@tanstack/react-query';
 import useMutationHooks from '~/hooks/useMutationHooks';
 import * as QuizHistoryService from '~/services/quizHistory.service';
-
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 //end
 
 const TakeQuizContext = createContext();
@@ -131,11 +132,37 @@ const checkQuestionCorrectQuestionType2 = (
     }
     return null;
 };
+// đếm số câu đúng trong 1 câu hỏi
 const countCorrectAnswerQuizDetail = (question) => {
     if (!(question.answers.length > 0)) return 0;
     let count = 0;
     question.answers.forEach((answer) => {
         if (answer?.isCorrect) count++;
+    });
+    return count;
+};
+const countCorrectAnswerChoices = (answerChoices, quizDetail) => {
+    let count = 0;
+    //lặp qua từng phần
+    Object.entries(answerChoices).forEach(([keyOfPart, valueOfPart]) => {
+        if (typeof valueOfPart === 'object') {
+            Object.entries(valueOfPart).forEach(([keyOfQuestion, valueOfQuestion]) => {
+                if (typeof valueOfQuestion === 'object') {
+                    if (valueOfQuestion.isCorrect) {
+                        count++;
+                    }
+                } else if (Array.isArray(valueOfQuestion)) {
+                    if (
+                        countCorrectAnswerQuizDetail(quizDetail.quiz[keyOfPart].questions[keyOfQuestion]) ===
+                        valueOfQuestion.length
+                    ) {
+                        if (valueOfQuestion.every((answer) => answer.isCorrect === true)) {
+                            count++;
+                        }
+                    }
+                }
+            });
+        }
     });
     return count;
 };
@@ -165,7 +192,7 @@ const calculateScore = (answerChoices, countQuestionQuizDetail, quizDetail) => {
                 });
             }
         });
-        return Math.ceil((countCorrectAnswer / countQuestionQuizDetail) * 10);
+        return ((countCorrectAnswer / countQuestionQuizDetail) * 10).toFixed(2);
     }
 };
 const TakeQuizProvider = ({ children }) => {
@@ -184,7 +211,6 @@ const TakeQuizProvider = ({ children }) => {
     const [currentQuestionType, setCurrentQuestionType] = useState(null);
     const [countAnswerChoices, setCountAnswerChoices] = useState(0);
     const [countQuestionQuizDetail, setCountQuestionQuizDetail] = useState(0);
-
     // set cho current question type khi vào bài thi và đếm số câu hỏi trong bài
     useEffect(() => {
         if (!queryQuizDetail?.data) return;
@@ -222,7 +248,7 @@ const TakeQuizProvider = ({ children }) => {
     //Khi get có lỗi
     useEffect(() => {
         if (queryQuizDetail.isError) {
-            message.error(queryQuizDetail.error.message);
+            message.error('Lỗi');
         }
     }, [queryQuizDetail.isError]);
     //Set currentQuestionType khi thay đổi câu hỏi
@@ -679,8 +705,10 @@ const TableOfQuestion = () => {
 const TakeQuizPageMain = () => {
     const { quizDetail, answerChoices, isEnded, isTimeout, countQuestionQuizDetail } = useContext(TakeQuizContext);
     const [score, setScore] = useState(0);
+    const [answerCorrectCount, setAnswerCorrectCount] = useState(0);
     const handleSaveTakeQuizHistory = useMutationHooks((data) => QuizHistoryService.saveQuizHistory(data));
     useEffect(() => {
+        if (!answerChoices || !quizDetail.id) return;
         if (isTimeout) {
             message.warning('Bạn đã hết giờ làm bài');
         }
@@ -693,8 +721,16 @@ const TakeQuizPageMain = () => {
                 answerChoices,
             });
         }
-        if (!answerChoices || !score || !quizDetail.id) return;
+        if (answerChoices) {
+            const count = countCorrectAnswerChoices(answerChoices, quizDetail) || 0;
+            setAnswerCorrectCount(count);
+        }
     }, [isEnded, isTimeout]);
+    useEffect(() => {
+        if (handleSaveTakeQuizHistory.isSuccess) {
+            handleSaveTakeQuizHistory.reset();
+        }
+    }, [handleSaveTakeQuizHistory.isSuccess]);
     return (
         <div className="w-full h-full flex justify-center items-center">
             {!handleSaveTakeQuizHistory.isPending ? (
@@ -710,13 +746,46 @@ const TakeQuizPageMain = () => {
                             )}
                         </div>
                     ) : (
-                        <div className="absolute inset-0 w-full bg-black bg-opacity-65 overflow-hidden min-h-96 px-5 py-5 md:px-10 md:py-10 flex justify-center items-start">
-                            <div className="relative text-black w-full md:w-2/3 bg-white rounded-md px-5 pt-10 pb-24 md:pb-20 flex justify-center flex-col items-center">
-                                <h4 className="">Điểm của bạn là:</h4>
-                                <p className="text-9xl my-5 font-semibold text-primary">{score}</p>
+                        <div className="inset-0 w-full min-h-96 mx-5 my-5 md:mx-10 md:my-10">
+                            <div className="text-black w-full bg-white shadow rounded px-5 py-5 flex flex-col items-center justify-center">
+                                <div className="w-full flex flex-row gap-3">
+                                    <div className="flex flex-col w-1/3 rounded-lg shadow-md border px-3 py-3 items-center">
+                                        <h5 className="">Điểm của bạn là:</h5>
+                                        <div className="w-1/2 mt-3">
+                                            <CircularProgressbar
+                                                styles={buildStyles({
+                                                    textSize: '39px',
+                                                    pathColor:
+                                                        score < 5 ? '#ff0000' : score < 7 ? '#ffff00' : '#00ff00',
+                                                    textColor: '#333',
+                                                    trailColor: '#eee',
+                                                })}
+                                                value={score}
+                                                maxValue={10}
+                                                text={`${score}`}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col w-1/3 rounded-lg shadow-md border px-3 py-3 items-center">
+                                        <h5>Số câu đúng</h5>
+                                        <div className="mt-3 w-full flex flex-col items-center justify-center flex-1 gap-3">
+                                            <LinearProgressBar
+                                                answerCorrectCount={answerCorrectCount}
+                                                max={countQuestionQuizDetail}
+                                            />
+                                            <h5 className="text-[#333]">
+                                                <span className="font-bold">{answerCorrectCount}</span>/
+                                                <span className="text-green-500 font-bold">
+                                                    {countQuestionQuizDetail}
+                                                </span>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <Link
                                     to={siteRouter.discover}
-                                    className="bg-primary text-3xl px-3 py-3 mt-6 md:px-2 md:py-2 md:mt-4 z-20 absolute text-white font-bold md:text-lg rounded-md bottom-5"
+                                    className="bg-primary text-3xl px-3 py-3 mt-6 md:px-2 md:py-2 md:mt-10   z-20 text-white font-bold md:text-lg rounded-md"
                                 >
                                     OK
                                 </Link>
@@ -734,6 +803,27 @@ const TakeQuizPageMain = () => {
         </div>
     );
 };
+const LinearProgressBar = ({ answerCorrectCount, max }) => {
+    const percent = (answerCorrectCount / max) * 100;
+    const getColor = (percent) => {
+        if (percent < 50) return '#ff0000'; // đỏ
+        if (percent < 70) return '#ffff00'; // vàng
+        return '#00ff00'; // xanh
+    };
+    return (
+        <div style={{ width: '100%', background: '#eee', borderRadius: '8px', overflow: 'hidden', height: '20px' }}>
+            <div
+                style={{
+                    width: `${percent}%`,
+                    height: '100%',
+                    backgroundColor: getColor(percent),
+                    transition: 'width 0.5s ease',
+                }}
+            />
+        </div>
+    );
+};
+
 const TakeQuizPage = () => {
     return (
         <TakeQuizProvider>

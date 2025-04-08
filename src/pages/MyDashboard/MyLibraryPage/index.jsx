@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import QuizCard from '~/components/QuizCard';
 import * as UserService from '~/services/user.service';
-import { handleCountQuestion } from '~/utils';
+
 const MyLibrary = () => {
     const userQuery = useQuery({
         queryKey: ['quizHistoryQuery'],
         queryFn: () => UserService.getUserDetail(),
     });
+    console.log(userQuery.data);
     return (
         <>
             <section className="pb-5">
@@ -25,7 +26,7 @@ const MyLibrary = () => {
                                 accessCount={quiz?.accessCount}
                                 onDelete={false}
                                 examCount={quiz?.examCount}
-                                questionCount={quiz?.questionCount || '...'}
+                                questionCount={quiz?.questionCount}
                                 id={quiz._id}
                             />
                         ))}

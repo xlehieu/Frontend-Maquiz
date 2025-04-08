@@ -1,16 +1,27 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { faBookOpenReader, faChartSimple, faPlayCircle, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+    faBookOpenReader,
+    faChartSimple,
+    faHeart,
+    faPlayCircle,
+    faQuestionCircle,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { quizRouter } from '~/config';
-import { Popover } from 'antd';
+import { message, Popover } from 'antd';
 import LazyImage from '~/components/LazyImage';
 import Modal from '~/components/Modal';
-
+import useMutationHooks from '~/hooks/useMutationHooks';
+import * as UserService from '~/services/user.service';
+import { useDispatch, useSelector } from 'react-redux';
+import { favoriteQuiz } from '~/redux/slices/user.slice';
 const GeneralInformation = ({ quizDetail }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user);
     const handleCountQuestion = useMemo(() => {
         if (quizDetail?.quiz?.length > 0) {
             return quizDetail?.quiz?.reduce((accumulator, partCurrent) => {
@@ -19,6 +30,20 @@ const GeneralInformation = ({ quizDetail }) => {
         }
         return 0;
     }, [quizDetail]);
+    const favoriteMutation = useMutationHooks((data) => UserService.favoriteQuiz(data));
+    const handleFavoriteQuiz = () => {
+        if (!quizDetail._id) return;
+        if (user?.favoriteQuiz?.some((quiz) => quiz.slug === quizDetail.slug))
+            return message.info('Đề thi đã có trong danh sách yêu thích! ❤️❤️❤️');
+        favoriteMutation.mutate({ id: quizDetail._id });
+        dispatch(favoriteQuiz({ slug: quizDetail.slug }));
+    };
+    useEffect(() => {
+        if (favoriteMutation.isSuccess) {
+            message.success('Đã thêm đề thi vào mục yêu thích! ❤️❤️❤️');
+            favoriteMutation.reset();
+        }
+    }, [favoriteMutation.isSuccess]);
     const handleOpenModalStartQuiz = async () => {
         navigate(`${quizRouter.takeQuiz}/${quizDetail?.slug}`);
     };
@@ -120,6 +145,16 @@ const GeneralInformation = ({ quizDetail }) => {
                         >
                             <FontAwesomeIcon icon={faPlayCircle} className="mr-2" />
                             Bắt đầu ôn thi
+                        </button>
+                    </div>
+                    <div className="col-start-3 col-end-3">
+                        <button
+                            onClick={handleFavoriteQuiz}
+                            // to={`${quizRouter.takeQuiz}/${quizDetail?.slug}`}
+                            className="bg-gradient-to-r from-pink-400 to-pink-600 text-white rounded hover:opacity-60 duration-300 w-full py-1"
+                        >
+                            <FontAwesomeIcon icon={faHeart} className="mr-2" />
+                            Yêu thích
                         </button>
                     </div>
                 </div>
