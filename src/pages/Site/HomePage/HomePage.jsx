@@ -21,12 +21,17 @@ export default function HomePage() {
         <>
             <section className="flex flex-col md:flex-row justify-center items-center py-20">
                 <div className="w-full md:w-2/5 text-center">
-                    <h2 className="text-3xl font-extrabold bg-gradient-to-r from-[#FFAFBD] via-primary to-[#ffc3a0] bg-clip-text text-transparent animate-animate-gradient bg-[length:400%] leading-tight mb-6 ">
+                    <h2 className="text-3xl font-extrabold bg-gradient-to-r from-primary  via-[#cc2b5e] to-[#F9D423] bg-clip-text text-transparent animate-animate-gradient bg-[length:400%] leading-tight mb-6">
                         Hệ thống quản lý đề thi trắc nghiệm MAQUIZ
                     </h2>
                     <p className="text-lg text-gray-600 mb-10">
                         Tạo, quản lý và thi trắc nghiệm dễ dàng chỉ với vài cú click chuột.
                     </p>
+                    <div className="text-xl animate-blink-blink-gradient bg-gradient-to-r from-primary  via-[#cc2b5e] to-[#F9D423] bg-clip-text text-transparent bg-[length:400%] mb-10 md:mb-2">
+                        Ôn thi tuyệt lắm ai ơi
+                        <br />
+                        MAQUIZ đã có, tuy chơi mà học
+                    </div>
                 </div>
                 <div className="w-full md:w-3/5 flex flex-col gap-14 justify-center items-center">
                     <div className="grid grid-cols-2 w-full">

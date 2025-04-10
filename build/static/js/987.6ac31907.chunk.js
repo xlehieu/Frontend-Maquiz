@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkclient=self.webpackChunkclient||[]).push([[987],{987:(e,c,n)=>{n.r(c),n.d(c,{default:()=>i});n(9950);var s=n(8429),t=n(4414);const i=()=>{const{id:e}=(0,s.g)();return(0,t.jsx)("div",{children:e})}}}]);

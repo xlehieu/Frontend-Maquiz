@@ -1,4 +1,4 @@
-import { faBookOpen, faEllipsisVertical, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBookOpen, faEllipsisVertical, faPenAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
 import Tippy from '@tippyjs/react';
@@ -13,6 +13,7 @@ import BlurBackground from '~/components/BlurBackground';
 import LazyImage from '~/components/LazyImage';
 import LoadingComponent from '~/components/LoadingComponent';
 import Modal from '~/components/Modal';
+import UploadComponent from '~/components/UploadComponent';
 import { quizRouter } from '~/config';
 import configEditor from '~/config/editor';
 import useMutationHooks from '~/hooks/useMutationHooks';
@@ -22,6 +23,10 @@ import * as QuizService from '~/services/quiz.service';
 const ClassroomContext = createContext();
 const ClassroomProvider = ({ children }) => {
     const { classCode } = useParams();
+    const [classroom, setClassroom] = useState(null);
+    const [name, setName] = useState('');
+    const [thumb, setThumb] = useState('');
+    const [subject, setSubject] = useState('');
     const queryClassDetail = useQuery({
         queryKey: ['queryClassDetail'],
         queryFn: () => ClassroomService.getClassroomDetail({ classCode }),
@@ -29,10 +34,17 @@ const ClassroomProvider = ({ children }) => {
     useEffect(() => {
         if (queryClassDetail.isError) {
             message.error(queryClassDetail?.error.message || 'Có lỗi xảy ra');
+        } else if (queryClassDetail.isSuccess) {
+            setClassroom(queryClassDetail?.data);
+            setName(queryClassDetail?.data?.name);
+            setThumb(queryClassDetail?.data?.thumb);
+            setSubject(queryClassDetail?.data?.subject);
         }
-    }, [queryClassDetail.isError]);
+    }, [queryClassDetail.isError, queryClassDetail.isSuccess]);
     return (
-        <ClassroomContext.Provider value={{ classroom: queryClassDetail.data }}>
+        <ClassroomContext.Provider
+            value={{ classroom, setClassroom, name, setName, subject, setSubject, thumb, setThumb }}
+        >
             {queryClassDetail.isLoading ? <LoadingComponent /> : <>{children}</>}
         </ClassroomContext.Provider>
     );
@@ -73,7 +85,8 @@ const ChooseQuizzes = ({ quizzes = [], selectedQuizzes, setSelectedQuizzes }) =>
 };
 const NewsFeedComponent = () => {
     const navigate = useNavigate();
-    const { classroom } = useContext(ClassroomContext);
+    const { classroom, setClassroom, name, setName, subject, setSubject, thumb, setThumb } =
+        useContext(ClassroomContext);
     const [isShowModal, setIsShowModal] = useState(false);
     const [isOpenQuizzes, setIsOpenQuizzes] = useState(false);
     const [notificationText, setNotificationText] = useState('');
@@ -94,10 +107,7 @@ const NewsFeedComponent = () => {
             message.error(uploadPostMutation.error.message);
         } else if (uploadPostMutation.isSuccess) {
             message.success('Thêm thông báo lớp học thành công');
-            setNotificationText('');
-            setSelectedQuizzes([]);
-            setIsOpenQuizzes(false);
-            uploadPostMutation.reset();
+            window.location.reload();
         }
     }, [uploadPostMutation.isError, uploadPostMutation.isSuccess]);
 
@@ -105,7 +115,6 @@ const NewsFeedComponent = () => {
     const deletePostMutation = useMutationHooks((data) => PostService.deletePostById(data));
     const [currentId, setCurrentId] = useState(null);
     const handleOpenModal = (id) => {
-        console.log(id);
         setIsShowModal(true);
         setCurrentId(id);
     };
@@ -113,14 +122,68 @@ const NewsFeedComponent = () => {
         if (!currentId) return message.error('Lỗi');
         deletePostMutation.mutate({ postIdToDelete: currentId });
     };
+    useEffect(() => {
+        if (deletePostMutation.isError) {
+            message.error('Có lỗi xảy ra');
+            setIsShowModal(false);
+            deletePostMutation.reset();
+        } else if (deletePostMutation.isSuccess) {
+            window.location.reload();
+        }
+    }, [deletePostMutation.isError, deletePostMutation.isSuccess]);
+    //region edit classroom
+    const [isShowModalEdit, setIsShowModalEdit] = useState(false);
+    const updateInfoClassroomMutation = useMutationHooks((data) => ClassroomService.updateInfoClassroom(data));
+    const handleUpdateInfoClassroom = () => {
+        if (!name?.trim() || !subject?.trim()) return message.error('Tên lớp học và tên môn học không thể bỏ trống');
+        updateInfoClassroomMutation.mutate({ classCode: classroom?.classCode, name, subject, thumb });
+    };
+    useEffect(() => {
+        if (updateInfoClassroomMutation.isError) {
+            message.error('Có lỗi xảy ra');
+            setIsShowModalEdit(false);
+            updateInfoClassroomMutation.reset();
+        } else if (updateInfoClassroomMutation.isSuccess) {
+            message.success('Cập nhật thông tin lớp học thành công');
+            setIsShowModalEdit(false);
+            setClassroom((prev) => ({ ...prev, name, subject, thumb }));
+            updateInfoClassroomMutation.reset();
+        }
+    }, [updateInfoClassroomMutation.isError, updateInfoClassroomMutation.isSuccess]);
     return (
         <>
             <div className="w-full">
                 <div className="md:rounded-2xl md:overflow-hidden w-full h-56 relative">
-                    <img className="w-full h-full object-cover opacity-80" src={classroom?.thumb} alt="class image" />
-                    <h3 className="absolute bottom-4 left-4 text-4xl font-medium text-white line-clamp-1">
+                    <img className="w-full h-full object-cover opacity-60" src={classroom?.thumb} alt="class image" />
+                    <h3 className="absolute bottom-4 left-4 text-4xl font-medium text-gray-900 line-clamp-1">
                         {classroom?.name}
                     </h3>
+                    <div className="absolute top-4 right-4">
+                        <Tippy
+                            interactive={true}
+                            trigger="click"
+                            placement="bottom-end"
+                            offset={[0, 0]}
+                            content={
+                                <div
+                                    className="flex flex-col text-sm shadow-md bg-white w-28 rounded-sm overflow-hidden"
+                                    tabIndex="-1"
+                                >
+                                    <button
+                                        onClick={() => setIsShowModalEdit(true)}
+                                        className="py-1 px-2 text-gray-900 bg-white hover:opacity-80 transition-all"
+                                    >
+                                        <FontAwesomeIcon className="mr-1" icon={faPenAlt} />
+                                        Chỉnh sửa
+                                    </button>
+                                </div>
+                            }
+                        >
+                            <button className="mr-3 px-2 py-2">
+                                <FontAwesomeIcon icon={faEllipsisVertical} className="text-2xl text-gray-900" />
+                            </button>
+                        </Tippy>
+                    </div>
                 </div>
                 <div className="mt-5">
                     <div>
@@ -239,6 +302,35 @@ const NewsFeedComponent = () => {
                 onLoading={deletePostMutation.isPending}
                 title="Xóa thông báo lớp học"
                 content="Bạn có chắc về quết định này?"
+            />
+            <Modal
+                isShow={isShowModalEdit}
+                onCancel={() => setIsShowModalEdit(false)}
+                onLoading={updateInfoClassroomMutation.isPending}
+                title="Chỉnh sửa thông tin"
+                bgColorButtonHandle="bg-yellow-500"
+                textButtonHandle="Chỉnh sửa"
+                onOk={() => handleUpdateInfoClassroom()}
+                content={
+                    <div>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium">Tên lớp học</label>
+                            <input
+                                className="border-2 border-gray-300 rounded-md px-3 py-1"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                            <label className="text-sm font-medium">Tên môn học</label>
+                            <input
+                                className="border-2 border-gray-300 rounded-md px-3 py-1"
+                                value={subject}
+                                onChange={(e) => setSubject(e.target.value)}
+                            />
+                            <label className="text-sm font-medium">Ảnh lớp học</label>
+                            <UploadComponent imageUrl={thumb} setImageUrl={setThumb} />
+                        </div>
+                    </div>
+                }
             />
         </>
     );

@@ -1,12 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef, createContext, useContext } from 'react';
 import useMutationHooks from '~/hooks/useMutationHooks';
-import {
-    PlusCircleOutlined,
-    LoadingOutlined,
-    DeleteOutlined,
-    PlusOutlined,
-    DeliveredProcedureOutlined,
-} from '@ant-design/icons';
+import { LoadingOutlined, DeleteOutlined, PlusOutlined, DeliveredProcedureOutlined } from '@ant-design/icons';
 
 import JoditEditor from 'jodit-react';
 //Components
@@ -20,7 +14,7 @@ import { Input, message, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { educationLevels, imageQuizThumbDefault } from '~/constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboard, faQuestionCircle, faReply } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard, faPlusCircle, faQuestionCircle, faReply, faSave } from '@fortawesome/free-solid-svg-icons';
 import { Navigate, useNavigate } from 'react-router-dom';
 import configEditor from '~/config/editor';
 import { useSelector } from 'react-redux';
@@ -70,8 +64,10 @@ const CreateQuizGeneralInfo = () => {
             setCurrentTabIndex(1);
             setQuizId(createQuizGeneralInfoMutation?.data?._id);
             message.success('Tạo bài trắc nghiệm thành công');
+            createQuizGeneralInfoMutation.reset();
         } else if (createQuizGeneralInfoMutation.isError) {
             message.error('Tạo bài trắc nghiệm thất bại. Vui lòng thử lại');
+            createQuizGeneralInfoMutation.reset();
         }
     }, [createQuizGeneralInfoMutation.isSuccess, createQuizGeneralInfoMutation.isError]);
 
@@ -259,16 +255,17 @@ const CreateQuizGeneralInfo = () => {
                     </div>
                 </div>
                 <div>
-                    <Button
-                        primary
-                        fontBold
+                    <button
                         onClick={handleCreateQuizClick}
-                        leftIcon={
-                            createQuizGeneralInfoMutation.isPending ? <LoadingOutlined /> : <PlusCircleOutlined />
-                        }
+                        className="py-2 px-4 rounded-md bg-primary text-white font-semibold hover:bg-primary-bold transition"
                     >
+                        {createQuizGeneralInfoMutation.isPending ? (
+                            <LoadingOutlined />
+                        ) : (
+                            <FontAwesomeIcon icon={faPlusCircle} />
+                        )}{' '}
                         Thêm đề thi mới
-                    </Button>
+                    </button>
                 </div>
             </div>
         </div>
@@ -514,23 +511,29 @@ const CreateQuizQuestion = () => {
                     </div>
                     <button
                         onClick={handleAddAnswer}
-                        className={'w-full py-3 rounded-md border-4 border-dashed border-secondary'}
+                        className={
+                            'w-full py-3 rounded-md border-4 border-dashed border-primary hover:opacity-50 transition'
+                        }
                     >
-                        <span className="text-secondary font-bold">
+                        <span className="text-primary font-bold">
                             <PlusOutlined className="text-xl pr-2" />
                             Thêm đáp án
                         </span>
                     </button>
+                    <div className="mt-4 rounded-lg flex justify-end gap-3">
+                        <button
+                            className="px-3 py-2 rounded bg-gradient-to-r from-primary  via-[#cc2b5e] to-[#F9D423] bg-[length:400%] animate-animate-gradient text-white hover:bg-primary-bold"
+                            onClick={() => handleCreateQuestionClick()}
+                        >
+                            {createQuestionMutation.isPending ? <LoadingOutlined /> : <DeliveredProcedureOutlined />}{' '}
+                            Lưu và tiếp tục tạo mới
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div className="px-3 py-4 mt-4 rounded-lg border-2 shadow-sm bg-white flex justify-end gap-4">
-                <Button primary>Lưu câu hỏi</Button>
-                <Button primary onClick={() => handleCreateQuestionClick()}>
-                    {createQuestionMutation.isPending ? <LoadingOutlined /> : <DeliveredProcedureOutlined />} Lưu và
-                    tiếp tục tạo mới
-                </Button>
+            <div className="flex flex-col w-full items-end">
+                <BlurBackground isActive={isActiveQuizPartNameDialog} />
             </div>
-            <BlurBackground isActive={isActiveQuizPartNameDialog} />
         </div>
     );
 };

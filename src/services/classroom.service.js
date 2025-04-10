@@ -69,3 +69,29 @@ export const enrollInClassroom = async (data) => {
         }
     }
 };
+export const updateInfoClassroom = async (data) => {
+    try {
+        const { classCode, name, subject, thumb } = data;
+        if (!classCode?.trim()) throw new Error('Vui lòng nhập mã lớp');
+        if (!name?.trim() || !subject?.trim()) {
+            throw new Error('Tên lớp học và tên môn học không thể bỏ trống');
+        }
+        const res = await axiosCredentials.patch(
+            '/classroom/info',
+            JSON.stringify({
+                classCode,
+                name,
+                subject,
+                thumb,
+            }),
+        );
+        if (res.status === 200 && res.data) {
+            return res.data.data;
+        }
+        return null;
+    } catch (err) {
+        if (err.response) {
+            throw new Error(err?.response?.data.message);
+        }
+    }
+};

@@ -28,7 +28,9 @@ export const quizRouter = {
 };
 export const adminRouter = {
     userList: '/admin/users-management',
+    userDetail: '/admin/users-management/detail',
     classroomList: '/admin/classrooms-management',
     quizList: '/admin/quizzes-management',
+    quizDetail: '/admin/quizzes-management/detail',
 };
 export default siteRouter;

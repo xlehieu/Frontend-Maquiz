@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { message, Pagination } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useReducer, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { adminRouter } from '~/config';
 import { PAGE_SIZE } from '~/constants';
 import useMutationHooks from '~/hooks/useMutationHooks';
 import * as UserManagementService from '~/services/admin/user.management.service';
@@ -32,6 +34,7 @@ const userManageReducer = (state, action) => {
     }
 };
 const UserManagement = () => {
+    const navigate = useNavigate();
     const [userList, dispatchUserList] = useReducer(userManageReducer, []);
     const [totalUser, setTotalUser] = useState(0);
     const userListQuery = useQuery({
@@ -77,6 +80,10 @@ const UserManagement = () => {
             },
         });
     };
+    const handleClickUser = (userId) => {
+        if (!userId) return;
+        navigate(`${adminRouter.userDetail}/${userId}`);
+    };
     return (
         <>
             <section className="p-6 overflow-x-scroll px-0 pt-0 pb-2">
@@ -113,8 +120,8 @@ const UserManagement = () => {
                     </thead>
                     <tbody>
                         {userList?.map((user, idx) => (
-                            <tr key={idx}>
-                                <td className="py-3 px-5 border-b border-blue-gray-50 text-center">
+                            <tr key={idx} className="hover:cursor-pointer" onClick={() => handleClickUser(user._id)}>
+                                <td className="py-3 px-5 border-b border-lime-800 text-center">
                                     <div className="flex items-center gap-4">
                                         <img
                                             src={user.avatar}
@@ -131,17 +138,17 @@ const UserManagement = () => {
                                         </div>
                                     </div>
                                 </td>
-                                <td className="py-3 px-5 border-b border-blue-gray-50 text-center">
+                                <td className="py-3 px-5 border-b border-lime-800 text-center">
                                     <p className="block antialiased text-base font-semibold text-blue-gray-600">
                                         {user.phone || ''}
                                     </p>
                                 </td>
-                                <td className="py-3 px-5 border-b border-blue-gray-50 text-center">
+                                <td className="py-3 px-5 border-b border-lime-800 text-center">
                                     <p className="block antialiased text-base font-semibold text-blue-gray-600">
                                         {user.createdAt ? dayjs(user.createdAt).format('DD/MM/YYYY') : 'null'}
                                     </p>
                                 </td>
-                                <td className="py-3 px-5 border-b border-blue-gray-50 text-center">
+                                <td className="py-3 px-5 border-b border-lime-800 text-center">
                                     <label className="inline-flex items-center cursor-pointer">
                                         <input
                                             type="checkbox"

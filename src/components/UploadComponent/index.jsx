@@ -2,7 +2,7 @@ import React, { useRef, useState, memo } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 import LazyImage from '../LazyImage';
 
 const getBase64 = (img, callback) => {
@@ -23,7 +23,7 @@ const beforeUpload = (event) => {
     }
     return isJpgOrPng && isLt2M;
 };
-const UploadComponent = ({ imageUrl, setImageUrl, ...props }) => {
+const UploadComponent = ({ imageUrl, setImageUrl, className, ...props }) => {
     const inputRef = useRef();
     const [loading, setLoading] = useState(false);
     const handleChange = (event) => {
@@ -39,7 +39,7 @@ const UploadComponent = ({ imageUrl, setImageUrl, ...props }) => {
     };
     const UploadButton = () => (
         <button className="w-full" type="button" onClick={handleClickOpenInputFile}>
-            {loading ? <LoadingOutlined /> : <FontAwesomeIcon icon={faUpload} />}
+            {loading ? <LoadingOutlined /> : <FontAwesomeIcon className="text-[#333]" icon={faImage} />}
             <div
                 style={{
                     marginTop: 8,
@@ -50,8 +50,14 @@ const UploadComponent = ({ imageUrl, setImageUrl, ...props }) => {
         </button>
     );
     return (
-        <div {...props}>
-            <input type="file" className="hidden" ref={inputRef} onChange={handleChange} />
+        <div className={className} {...props}>
+            <input
+                type="file"
+                className="hidden"
+                ref={inputRef}
+                onChange={handleChange}
+                accept="image/jpeg, image/png"
+            />
             <div
                 className={`border-2 border-dashed h-44 w-full ${
                     !imageUrl?.length > 0 ? 'py-5' : ''

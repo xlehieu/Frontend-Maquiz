@@ -1,15 +1,14 @@
-import { faBookOpen, faClockRotateLeft, faFilter, faHeart, faHouse, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarDays, faFilter, faSchool, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import QuizCard from '~/components/QuizCard';
-import { userDashboardRouter } from '~/config';
 import useDebounce from '~/hooks/useDebounce';
 import useMutationHooks from '~/hooks/useMutationHooks';
 import * as QuizService from '~/services/quiz.service';
 import LoadingComponent from '~/components/LoadingComponent';
-import { Pagination, Slider } from 'antd';
-import { PAGE_SIZE } from '~/constants';
+import { Pagination, Select, Slider } from 'antd';
+import { educationLevels, PAGE_SIZE } from '~/constants';
+
 const QuizzesContext = createContext();
 const marks = {
     2000: '2000',
@@ -17,43 +16,106 @@ const marks = {
 const nowYear = new Date().getFullYear();
 marks[nowYear] = nowYear;
 const QuizzesProvider = ({ children }) => {
-    const [quizzes, setQuizzes] = useState([]);
-    return <QuizzesContext.Provider value={{ quizzes, setQuizzes }}>{children}</QuizzesContext.Provider>;
+    const [quizzes, setQuizzes] = useState({});
+    const [searchName, setSearchName] = useState('');
+    const [schoolYear, setSchoolYear] = useState([2000, nowYear]);
+    const [educationLevel, setEducationLevel] = useState([]);
+    return (
+        <QuizzesContext.Provider
+            value={{
+                quizzes,
+                setQuizzes,
+                searchName,
+                setSearchName,
+                schoolYear,
+                setSchoolYear,
+                educationLevel,
+                setEducationLevel,
+            }}
+        >
+            {children}
+        </QuizzesContext.Provider>
+    );
 };
 const SideBar = () => {
-    const { quizzes, setQuizzes } = useContext(QuizzesContext);
-    const [filterYear, setFilterYear] = useState([2000, nowYear]);
-    const filterYearDebounce = useDebounce(filterYear);
+    const { setQuizzes, searchName, schoolYear, setSchoolYear, educationLevel, setEducationLevel } =
+        useContext(QuizzesContext);
+    const findQuizMutation = useMutationHooks((data) => QuizService.getDiscoveryQuizzes(data));
+    // schoolYear
+    const schoolYearDebounce = useDebounce(schoolYear);
     useEffect(() => {
-        console.log(filterYear);
-    }, [filterYearDebounce]);
+        if (schoolYearDebounce.length === 2) {
+            findQuizMutation.mutate({
+                schoolYear: schoolYearDebounce, //main
+                name: searchName,
+                educationLevel,
+            });
+        }
+    }, [schoolYearDebounce]);
+    //end
+    //education level
+    const educationLevelDebounce = useDebounce(educationLevel);
+    useEffect(() => {
+        if (Array.isArray(educationLevelDebounce))
+            findQuizMutation.mutate({
+                schoolYear: schoolYear,
+                name: searchName,
+                educationLevel: educationLevelDebounce, //main
+            });
+    }, [educationLevelDebounce]);
+    //end
+    useEffect(() => {
+        setQuizzes(findQuizMutation.data ?? []);
+    }, [findQuizMutation.data]);
+
     return (
-        <aside className="z-10 bg-white w-56 shadow-lg hidden md:block rounded">
+        <aside className="z-10 bg-white w-56 shadow-lg hidden md:block rounded py-5">
             <div>
-                <FontAwesomeIcon icon={faFilter} className="mt-4 ml-4 text-orange-300 text-xl" />
+                <FontAwesomeIcon icon={faFilter} className="ml-4 text-orange-300 text-xl" />
             </div>
-            <div className="flex flex-col mx-4 mt-3">
-                <p>Năm học</p>
+            <div className="flex flex-col mx-4 mt-3 text-[#333]">
+                <p>
+                    <FontAwesomeIcon icon={faCalendarDays} /> Năm học
+                </p>
                 <Slider
-                    value={filterYear}
+                    value={schoolYear}
                     range
                     marks={marks}
-                    defaultValue={filterYear}
-                    onChange={(value) => setFilterYear(value)}
+                    defaultValue={schoolYear}
+                    onChange={(value) => setSchoolYear(value)}
                     min={2000}
                     max={nowYear}
                 />
+            </div>
+            <div className="flex flex-col mx-4 mt-3 text-[#333]">
+                <p>
+                    <FontAwesomeIcon icon={faSchool} /> Trình độ
+                </p>
+                <Select
+                    className="mt-2"
+                    mode="multiple"
+                    allowClear
+                    placeholder="Chọn trình độ"
+                    value={educationLevel}
+                    onChange={(e) => setEducationLevel(e)}
+                >
+                    {educationLevels?.map((level, index) => (
+                        <Select.Option value={level} key={index}>
+                            {level}
+                        </Select.Option>
+                    ))}
+                </Select>
             </div>
         </aside>
     );
 };
 const MainResult = () => {
-    const { quizzes, setQuizzes } = useContext(QuizzesContext);
-    const [searchValue, setSearchValue] = useState('');
-    const debouncedValueSearch = useDebounce(searchValue);
+    const { quizzes, setQuizzes, searchName, setSearchName, schoolYear } = useContext(QuizzesContext);
+
+    const debouncedValueSearch = useDebounce(searchName);
     const findQuizMutation = useMutationHooks((data) => QuizService.getDiscoveryQuizzes(data));
     useEffect(() => {
-        if (debouncedValueSearch.trim()) findQuizMutation.mutate({ name: debouncedValueSearch });
+        if (debouncedValueSearch.trim()) findQuizMutation.mutate({ name: debouncedValueSearch, schoolYear });
     }, [debouncedValueSearch]);
     useEffect(() => {
         setQuizzes(findQuizMutation.data ?? []);
@@ -74,11 +136,16 @@ const MainResult = () => {
                         <div className="flex items-center rounded-md px-2 py-1 border border-gray-400 text-gray-700 focus-within:border-primary focus-within:shadow">
                             <FontAwesomeIcon icon={faSearch} className="text-gray-700" />
                             <input
-                                value={searchValue}
-                                onChange={(e) => setSearchValue(e.target.value)}
+                                value={searchName}
+                                onChange={(e) => setSearchName(e.target.value)}
                                 className="min-w-52 ml-2 outline-none caret-primary"
                                 placeholder="Nhập từ khóa tìm kiếm"
                             />
+                        </div>
+                        <div>
+                            <p className="text-[#333]">
+                                Số đề thi: <span className="font-bold ">{quizzes?.total}</span>
+                            </p>
                         </div>
                     </div>
                     <div className="grid w-full grid-cols-2 gap-4 px-0 py-10 sm:grid-cols-3 md:grid-cols-4  2xl:grid-cols-5">
@@ -116,7 +183,7 @@ const DiscoverPage = () => {
         <QuizzesProvider>
             <div className="relative">
                 <h1 className="text-xl font-medium text-gray-700 pb-3">Khám phá đề thi</h1>
-                <div className="flex flex-row space-x-4">
+                <div className="flex flex-row space-x-4 items-start">
                     <SideBar />
                     <MainResult />
                 </div>

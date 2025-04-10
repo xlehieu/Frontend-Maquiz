@@ -6,7 +6,7 @@ export const createPost = async (data) => {
             throw new Error('Lỗi');
         }
         const res = await axiosCredentials.post('/post', JSON.stringify(data));
-        if (res.status === 200) return 'Đăng bài thành công';
+        if (res.status === 200 && res.data) return res.data.data;
     } catch (err) {
         if (err.response) throw new Error(err.response.data.message || 'Thông báo thất bại');
     }

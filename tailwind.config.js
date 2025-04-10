@@ -36,10 +36,20 @@ module.exports = {
                     '50%': { 'background-position': '100%' },
                     '100%': { 'background-position': '0%' },
                 },
+                'blink-blink': {
+                    '0%': {
+                        transform: 'rotate(-5deg)',
+                        'font-size': '1.125rem',
+                    },
+                    '100%': { transform: 'rotate(5deg)', 'font-size': '1.25rem' },
+                },
             },
             animation: {
                 shrink: 'shrink 3s ease-in-out infinite',
                 'animate-gradient': 'animate-gradient 3s ease-in-out infinite',
+                'blink-blink': 'blink-blink 1s ease-in-out infinite',
+                'blink-blink-gradient':
+                    'blink-blink 2s ease-in-out infinite alternate, animate-gradient 3s ease-in-out infinite',
             },
         },
     },

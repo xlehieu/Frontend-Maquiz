@@ -30,3 +30,15 @@ export const changeQuizDisabled = async (data) => {
         if (err.response) throw err.response.data.message;
     }
 };
+export const getUserDetail = async (data) => {
+    try {
+        const { id } = data;
+        if (!id) return null;
+        const res = await axiosCredentials.get(`/admin/quiz-management/detail/${id}`);
+        if (res.data) {
+            return res.data.data;
+        }
+    } catch (err) {
+        if (err.response) throw err.response.data.message;
+    }
+};
